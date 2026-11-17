@@ -1,0 +1,8 @@
+@property --range-visual { syntax: '<number>'; inherits: true; initial-value: 0; }
+.smooth-range { --range-target: 0; --range-travel: 0px; transition: --range-visual 160ms cubic-bezier(.2,.7,.2,1); }
+#seek-bar.smooth-range::-webkit-slider-runnable-track, #volume-slider.smooth-range::-webkit-slider-runnable-track, input.smooth-range::-webkit-slider-runnable-track { background: linear-gradient(to right, var(--seek-played-color, #1db954) calc(var(--range-visual) * 100%), transparent calc(var(--range-visual) * 100%)), var(--seek-buffer-ranges, linear-gradient(transparent,transparent)) var(--bg-surface-active, #414149); }
+#seek-bar.smooth-range::-moz-range-track, #volume-slider.smooth-range::-moz-range-track, input.smooth-range::-moz-range-track { background: linear-gradient(to right, var(--seek-played-color, #1db954) calc(var(--range-visual) * 100%), transparent calc(var(--range-visual) * 100%)), var(--seek-buffer-ranges, linear-gradient(transparent,transparent)) var(--bg-surface-active, #414149); }
+input.smooth-range::-webkit-slider-thumb { translate: calc((var(--range-visual) - var(--range-target)) * var(--range-travel)) 0; }
+input.smooth-range::-moz-range-thumb { translate: calc((var(--range-visual) - var(--range-target)) * var(--range-travel)) 0; }
+.smooth-range.range-direct, html[data-animations="off"] .smooth-range { transition: none !important; }
+@media (prefers-reduced-motion: reduce) { .smooth-range { transition: none !important; } }

@@ -1,0 +1,1111 @@
+/* ==========================================================================
+   Responsive Layout (phones / small tablets)
+   Loaded LAST, so single-class rules here win ties against the other files.
+
+   Mobile layout, top to bottom:
+     1. Main content (header -> search -> filter/sort row -> list/grid)
+     2. Compact mini-player (now playing + transport, seek bar, extras row)
+     3. Bottom tab bar (nav + settings), sitting on the home-indicator area
+
+   What was wrong before, and what this file does about it:
+   - The footer stacked four full-height rows (~195px) AND the tab bar sat
+     above it, so the list got squeezed. The footer is now a 3-row grid
+     (~125px) and the tab bar goes underneath it, like most music apps.
+   - viewport-fit=cover was missing from index.html, so iOS letterboxed the
+     page and left dead bars at the top and bottom. With it added, safe-area
+     insets are handled here instead (top on #main-view, bottom on #sidebar).
+   - Inputs were 14px, which makes iOS Safari zoom the page on focus.
+   - Filter and sort were stacked full-width; they now share one row.
+   - The "TITLE" header row, icon-only-able buttons, 130px artist circles in
+     a single column, 16px tap targets on pin/heart, etc. all ate space.
+   ========================================================================== */
+
+@media (max-width: 720px), (orientation: landscape) and (max-height: 600px) and (pointer: coarse) {
+
+  /* ---- Touch behaviour ---- */
+  html,
+  body {
+    overscroll-behavior: none; /* no rubber-band of the whole app shell */
+  }
+
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* No double-tap zoom anywhere. "manipulation" still allows scrolling and
+     panning. It is on * so it covers everything, but a plain * rule loses
+     to any class rule, so elements that set their own touch-action (e.g.
+     drag handles) keep it. Pinch-zoom is blocked by the viewport tag and
+     a small script in index.html. */
+  html,
+  body,
+  * {
+    touch-action: manipulation;
+  }
+
+  /* ---- Stacking order (lowest -> highest) ----
+     panels < context menu < dialogs < toasts.
+     Dialogs (edit / delete / add to playlist / settings ...) must always
+     sit above the track menu, otherwise the bottom-sheet menu covers their
+     buttons and inputs. !important so no other stylesheet can reorder it. */
+  .context-menu {
+    z-index: 5000 !important;
+  }
+
+  .modal-overlay {
+    z-index: 6000 !important;
+  }
+
+  .toast-container {
+    z-index: 7000 !important;
+  }
+
+  /* Safety net: while ANY dialog is open the track menus are hidden, so
+     they can never overlap one, whichever handler opened it. */
+  body:has(.modal-overlay:not(.hidden)) .context-menu {
+    display: none !important;
+  }
+
+  /* No double-tap-to-zoom delay on anything tappable */
+  button,
+  select,
+  .track-row,
+  .sidebar-nav li,
+  .playlist-card,
+  .menu-item {
+    touch-action: manipulation;
+  }
+
+  /* ---- Master layout: main, mini-player, tab bar ---- */
+  #app-container {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) auto auto;
+    grid-template-areas:
+      "main"
+      "player"
+      "sidebar";
+  }
+
+  /* ==========================================================
+     Bottom tab bar
+     ========================================================== */
+  #sidebar {
+    flex-direction: row;
+    align-items: stretch;
+    gap: var(--space-2xs);
+    padding: var(--space-2xs) var(--space-xs)
+      calc(var(--space-2xs) + env(safe-area-inset-bottom, 0px));
+    border-right: none;
+    border-top: 1px solid var(--border-color);
+  }
+
+  .sidebar-header {
+    display: none;
+  }
+
+  /* No room for a reserved ad area in the tab bar */
+  #sidebar .ad-slot {
+    display: none;
+  }
+
+  .sidebar-nav {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .sidebar-nav ul {
+    flex-direction: row;
+    gap: 2px;
+    height: 100%;
+  }
+
+  .sidebar-nav li {
+    flex: 1 1 0;
+    min-width: 0;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3px;
+    padding: 6px 2px;
+    font-size: 0.6875rem; /* 11px */
+    line-height: 1.1;
+    text-align: center;
+  }
+
+  .sidebar-nav li .nav-icon {
+    font-size: 1.15rem;
+  }
+
+  /* "Recently Played" is the long one; truncate instead of wrapping so
+     every tab keeps the same height */
+  .nav-label {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .sidebar-footer {
+    flex-direction: row;
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+    gap: 0;
+  }
+
+  .sidebar-footer-btn {
+    width: 48px;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0;
+    font-size: 0.6875rem;
+  }
+
+  .sidebar-footer-btn .nav-icon {
+    font-size: 1.15rem;
+  }
+
+  .btn-label {
+    display: none; /* icon-only; aria-label covers a11y */
+  }
+
+  #shortcuts-btn {
+    display: none; /* no physical keyboard on mobile */
+  }
+
+  /* ==========================================================
+     Main content area
+     ========================================================== */
+  #main-view {
+    /* viewport-fit=cover lets the page draw under the status bar, so the
+       top inset is added here. Resolves to 0 where there is no inset. */
+    padding: calc(var(--space-sm) + env(safe-area-inset-top, 0px))
+      var(--space-md) var(--space-xs);
+    gap: var(--space-sm);
+  }
+
+  /* ---- Header: title on the left, actions on the right ---- */
+  .view-header {
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  .view-header h1 {
+    flex: 1 1 120px;
+    min-width: 0;
+    font-size: 1.375rem;
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .header-actions {
+    flex: 0 0 auto;
+    flex-wrap: nowrap;
+    gap: var(--space-xs);
+  }
+
+  /* Secondary / danger / warning actions become round icon buttons.
+     font-size: 0 hides the label text visually but leaves it in the
+     accessibility tree; the <i> gets its size back explicitly. */
+  .header-actions .secondary-btn,
+  .header-actions .danger-btn,
+  .header-actions .warning-btn {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    gap: 0;
+    justify-content: center;
+    font-size: 0;
+  }
+
+  .header-actions .secondary-btn i,
+  .header-actions .danger-btn i,
+  .header-actions .warning-btn i {
+    font-size: 1rem;
+  }
+
+  .header-actions .primary-btn {
+    height: 40px;
+    padding: 0 var(--space-md);
+    font-size: var(--font-size-sm);
+  }
+
+  /* Playlist detail shows Add Files + Add Folder + Rename + Delete.
+     When Delete is visible there are too many buttons for a labelled
+     primary, so it collapses to an icon as well. */
+  .header-actions:has(#delete-playlist-btn:not(.hidden-btn)) .primary-btn {
+    width: 40px;
+    padding: 0;
+    gap: 0;
+    justify-content: center;
+    font-size: 0;
+  }
+
+  .header-actions:has(#delete-playlist-btn:not(.hidden-btn)) .primary-btn i {
+    font-size: 1rem;
+  }
+
+  /* ---- Artist detail header ---- */
+  .artist-header {
+    align-items: center;
+    gap: var(--space-sm);
+    padding: 0 0 var(--space-md);
+    margin-bottom: 0;
+  }
+
+  .artist-header-info {
+    flex: 1 1 100%;
+    order: 1;
+    min-width: 0;
+  }
+
+  .artist-header-info h2 {
+    font-size: 1.5rem;
+    margin-bottom: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .artist-header-info p {
+    font-size: var(--font-size-sm);
+  }
+
+  .artist-actions {
+    order: 2;
+    width: 100%;
+    gap: var(--space-xs);
+  }
+
+  .artist-actions button {
+    flex: 1 1 0;
+    justify-content: center;
+  }
+
+  /* ---- Search + filter/sort ---- */
+  .library-toolbar {
+    gap: var(--space-xs);
+  }
+
+  .library-toolbar .search-bar-wrap {
+    flex: 1 1 100%;
+  }
+
+  /* Filter and sort share one row instead of stacking */
+  .library-filters {
+    flex: 1 1 100%;
+    flex-wrap: nowrap;
+    gap: var(--space-xs);
+  }
+
+  .filter-group {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .library-select {
+    width: 100%;
+    min-width: 0;
+    padding-left: 36px;
+    text-overflow: ellipsis;
+  }
+
+  .filter-icon,
+  .search-icon {
+    left: 12px;
+  }
+
+  /* ---- Track list ---- */
+  /* The only visible header cell on mobile is "Title", which is just noise */
+  .playlist-header,
+  #track-headers {
+    display: none !important;
+  }
+
+  .playlist-content {
+    gap: 0;
+    padding-bottom: var(--space-xs);
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .track-row {
+    grid-template-columns: minmax(0, 1fr) 40px;
+    gap: var(--space-xs);
+    min-height: 60px;
+    padding: 4px 2px 4px 6px;
+  }
+
+  .track-row:active {
+    background-color: var(--bg-surface-hover);
+  }
+
+  .track-row.playing:active {
+    background-color: var(--bg-surface-active);
+  }
+
+  .playlist-header .col-artist,
+  .playlist-header .col-album,
+  .playlist-header .col-plays,
+  .track-row .col-artist,
+  .track-row .col-album,
+  .track-row .col-plays {
+    display: none;
+  }
+
+  .track-subtitle {
+    display: block;
+  }
+
+  /* Pin / heart: 16px glyphs were nearly impossible to hit. These are flex
+     items of .col-title, so width/height apply directly. */
+  .col-title .pinned-icon,
+  .col-title .favorite-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 32px;
+    height: 44px;
+    margin: 0;
+  }
+
+  .col-title .favorite-icon {
+    margin-right: var(--space-2xs);
+  }
+
+  .col-actions {
+    width: auto;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .more-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 44px;
+    padding: 0;
+    font-size: 1.15rem;
+  }
+
+  /* ---- Playlist & artist grids: two columns instead of one giant card ---- */
+  .playlists-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-sm);
+    padding: var(--space-2xs) 0 var(--space-xs);
+  }
+
+  .playlist-card {
+    padding: var(--space-md) var(--space-sm);
+    border-radius: var(--border-radius-md);
+  }
+
+  .playlist-card h3 {
+    padding-right: 30px; /* keep clear of the pin button */
+    font-size: 1rem;
+    overflow-wrap: anywhere;
+  }
+
+  .playlist-card p {
+    font-size: var(--font-size-xs);
+  }
+
+  .playlist-pin-btn {
+    top: 8px;
+    right: 8px;
+    width: 32px;
+    height: 32px;
+  }
+
+  .artist-card-item {
+    padding: var(--space-md) var(--space-sm);
+  }
+
+  .artist-card-art {
+    width: 88px;
+    height: 88px;
+    margin-bottom: var(--space-sm);
+    font-size: 2.4rem;
+  }
+
+  .artist-card-item h3 {
+    max-width: 100%;
+    padding-right: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .grid-ad-card {
+    min-height: 96px;
+  }
+
+  /* Content-area ad banner (collapses to nothing when ads are off) */
+  .content-ad-slot,
+  .content-ad-slot .ad-slot-placeholder {
+    min-height: 52px;
+  }
+
+  /* While the visualizer is off, .visualizer-wrap is 0px tall but its two
+     1px borders + background still painted a 2px bar, and the flex gap
+     above it added ~12px of dead space. Collapse both. */
+  .visualizer-wrap:not(.visualizer-active) {
+    margin-top: calc(var(--space-sm) * -1);
+    border-width: 0;
+    background: transparent;
+  }
+
+  /* ---- Fullscreen stage (covers #main-view) ---- */
+  .fullscreen-stage {
+    padding: calc(env(safe-area-inset-top, 0px) + 56px) var(--space-md)
+      var(--space-md);
+  }
+
+  .fullscreen-top-actions {
+    top: calc(env(safe-area-inset-top, 0px) + var(--space-sm));
+    right: var(--space-sm);
+  }
+
+  .fullscreen-title {
+    font-size: var(--font-size-lg);
+  }
+
+  /* ==========================================================
+     Mini-player
+       row 1: [art + title/artist]            [shuffle prev PLAY next repeat]
+       row 2: [0:23 ------- seek ------- 2:20]
+       row 3: [visualizer  style  fullscreen  lyrics  queue  mute]
+     .playback-controls is display: contents so its two children
+     (.buttons and .progress-container) can be placed on the footer's own
+     grid without touching the HTML or any JS that references them.
+     ========================================================== */
+  #player-controls {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "np    btns"
+      "prog  prog"
+      "extra extra";
+    align-items: center;
+    justify-content: stretch;
+    gap: 2px var(--space-xs);
+    padding: var(--space-xs) var(--space-sm) var(--space-2xs);
+  }
+
+  .now-playing {
+    grid-area: np;
+    width: auto;
+    min-width: 0;
+  }
+
+  .playback-controls {
+    display: contents;
+  }
+
+  .playback-controls .buttons {
+    grid-area: btns;
+    gap: 0;
+  }
+
+  .progress-container {
+    grid-area: prog;
+    gap: var(--space-xs);
+  }
+
+  .extra-controls {
+    grid-area: extra;
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    justify-content: space-around;
+  }
+
+  .album-art-placeholder {
+    width: 44px;
+    height: 44px;
+  }
+
+  #player-controls .buttons .control-btn {
+    width: 36px;
+    height: 40px;
+    font-size: var(--font-size-md);
+  }
+
+  #player-controls .buttons .control-btn.play-main {
+    width: 44px;
+    height: 44px;
+    font-size: 1.5rem;
+  }
+
+  #player-controls .extra-controls .control-btn,
+  #player-controls .extra-controls .icon-btn {
+    width: 44px;
+    height: 38px;
+    font-size: 1.05rem;
+  }
+
+  /* Dragging a 100px slider in a cramped footer is fiddly on touch;
+     the mute button remains for quick access. */
+  .extra-controls input#volume-slider {
+    display: none;
+  }
+
+  /* Taller touch target for seeking, with a thumb that is always visible */
+  #seek-bar {
+    height: 24px;
+    touch-action: none; /* a scrub belongs to the range, not page panning */
+  }
+
+  #seek-bar::-webkit-slider-thumb {
+    opacity: 1;
+    height: 14px;
+    width: 14px;
+    margin-top: -5px;
+  }
+
+  #seek-bar::-moz-range-thumb {
+    opacity: 1;
+    height: 14px;
+    width: 14px;
+  }
+
+  /* ==========================================================
+     Side panels: full-screen overlays, clear of the notch/home bar
+     ========================================================== */
+  .queue-panel {
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    top: 0;
+    right: 0;
+  }
+
+  .queue-panel-header {
+    padding: calc(var(--space-md) + env(safe-area-inset-top, 0px))
+      var(--space-md) var(--space-sm);
+  }
+
+  .queue-panel-body {
+    padding-bottom: calc(var(--space-md) + env(safe-area-inset-bottom, 0px));
+  }
+
+  .lyrics-panel-header {
+    padding-top: calc(var(--space-md) + env(safe-area-inset-top, 0px));
+  }
+
+  .lyrics-editor {
+    padding-bottom: calc(var(--space-md) + env(safe-area-inset-bottom, 0px));
+  }
+
+  .queue-panel-body,
+  .lyrics-body,
+  .modal-content {
+    overscroll-behavior: contain;
+  }
+
+  /* ==========================================================
+     Modals
+     ========================================================== */
+  .modal-overlay {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    padding: env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px);
+  }
+
+  .modal-content,
+  .settings-content,
+  .shortcuts-content {
+    width: calc(100% - 24px);
+    max-height: calc(100dvh - 32px);
+    padding: var(--space-md);
+  }
+
+  /* Buttons share the row evenly so each one is an easy thumb target */
+  .modal-buttons .secondary-btn,
+  .modal-buttons .primary-btn,
+  .modal-buttons .danger-btn {
+    flex: 1 1 auto;
+    justify-content: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .settings-export-buttons .secondary-btn,
+  .settings-export-buttons .primary-btn,
+  .data-management-actions .secondary-btn,
+  .data-management-actions .warning-btn,
+  .data-management-actions .danger-btn {
+    flex: 1 1 100%;
+    justify-content: center;
+  }
+
+  /* ==========================================================
+     Context menu -> bottom sheet.
+     The desktop version is positioned next to the cursor by JS, which
+     tends to clip off the edge of a phone. !important is needed to beat
+     the inline left/top that JS writes.
+     ========================================================== */
+  .context-menu {
+    position: fixed !important;
+    left: var(--space-xs) !important;
+    right: var(--space-xs) !important;
+    top: auto !important;
+    bottom: calc(var(--space-xs) + env(safe-area-inset-bottom, 0px)) !important;
+    width: auto;
+    min-width: 0;
+    max-height: 70vh;
+    max-height: 70dvh;
+    overflow-y: auto;
+    padding: var(--space-xs) 0;
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.6);
+  }
+
+  .menu-item {
+    padding: 14px 20px;
+    font-size: var(--font-size-md);
+  }
+
+  /* ==========================================================
+     Toasts: top of the screen so they never cover the player
+     ========================================================== */
+  .toast-container {
+    top: calc(env(safe-area-inset-top, 0px) + var(--space-sm));
+    bottom: auto;
+    left: var(--space-sm);
+    right: var(--space-sm);
+  }
+
+  .toast {
+    text-align: center;
+  }
+}
+
+/* ==========================================================================
+   Touch devices: stop iOS from zooming the page when a field gets focus.
+   Safari zooms on any input/select/textarea under 16px. Kept separate from
+   the width query so it also covers large phones in landscape and tablets.
+   ========================================================================== */
+@media (hover: none) and (pointer: coarse) {
+  .search-input,
+  .library-select,
+  .modal-content input,
+  .modal-content select,
+  .modal-content textarea,
+  .lyrics-textarea {
+    font-size: 16px;
+  }
+
+  /* No hover on touch, so the seek/volume thumbs would otherwise never show */
+  input[type="range"]::-webkit-slider-thumb {
+    opacity: 1;
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    opacity: 1;
+  }
+
+  /* :hover sticks after a tap on touch screens; don't leave cards "lifted" */
+  .playlist-card:hover {
+    transform: none;
+  }
+}
+
+/* Small phones */
+@media (max-width: 420px) {
+  .settings-content,
+  .shortcuts-content {
+    padding: var(--space-md);
+  }
+}
+
+@media (max-width: 360px) {
+  #player-controls .buttons .control-btn {
+    width: 32px;
+  }
+
+  #player-controls .extra-controls .control-btn,
+  #player-controls .extra-controls .icon-btn {
+    width: 38px;
+  }
+
+  .sidebar-nav li {
+    font-size: 0.625rem;
+  }
+}
+
+/* Mid-size portrait (large phones / small tablets): three columns fit */
+@media (min-width: 520px) and (max-width: 720px) {
+  .playlists-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* ==========================================================================
+   Touch: no sticky highlight on rows/cards touched while scrolling.
+   On touch screens :hover sticks to whatever was last touched until another
+   tap elsewhere, and the row's tabindex adds a focus outline. Hover styles
+   are neutralised here; :active (the press feedback) is untouched.
+   ========================================================================== */
+@media (hover: none) {
+  .track-row.track-row:hover {
+    background-color: transparent;
+  }
+
+  .track-row.track-row.playing:hover {
+    background-color: var(--bg-surface-active);
+  }
+
+  .playlist-card.playlist-card:hover {
+    background: var(--bg-surface, #202026);
+    border-color: transparent;
+    transform: none;
+  }
+
+  .playlist-card.playlist-card.pinned:hover {
+    border-color: var(--primary, #1db954);
+  }
+
+  .more-btn.more-btn:hover {
+    color: var(--text-muted, #8e8e99);
+    background-color: transparent;
+  }
+
+  .sidebar-nav li:not(.active):hover {
+    background-color: transparent;
+    color: var(--text-muted);
+  }
+}
+
+.track-row:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ==========================================================================
+   MOBILE POLISH: uncrowded extras row + calmer Settings sheet
+   Appended last on purpose. Selectors are one notch more specific than the
+   rules above them, so nothing above needs to be edited or removed.
+   ========================================================================== */
+@media (max-width: 720px) {
+
+  /* ---------- Player extras row (below the seek bar) ----------
+     Before: 6 icons spread evenly = crowded and no meaning to the grouping.
+     After:  fullscreen + PiP hidden (tap the album art for fullscreen),
+             visual tools grouped on the left, listening tools on the right,
+             and the "style" button only appears once the visualizer is on. */
+  #fullscreen-toggle-btn,
+  #pip-toggle-btn {
+    display: none !important;
+  }
+
+  #player-controls .extra-controls {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    gap: var(--space-2xs);
+    margin-top: 2px;
+    padding: 2px var(--space-2xs) 0;
+    border-top: 1px solid var(--border-color);
+  }
+
+  #player-controls .extra-controls .control-btn {
+    width: 48px;
+    height: 40px;
+    font-size: 1.1rem;
+  }
+
+  /* Visual tools stay left; lyrics / queue / mute are pushed to the right */
+  #lyrics-toggle-btn {
+    margin-left: auto;
+  }
+
+  /* Style picker is only useful while the visualizer is running */
+  #player-controls .extra-controls:not(:has(#visualizer-toggle-btn[data-active="true"])) #visualizer-style-btn {
+    display: none;
+  }
+
+  #visualizer-toggle-btn[data-active="true"] {
+    color: var(--primary);
+  }
+
+  /* ---------- Settings: full-height bottom sheet ---------- */
+  .modal-overlay:has(> .settings-content) {
+    align-items: flex-end;
+    padding: calc(env(safe-area-inset-top, 0px) + var(--space-sm)) 0 0;
+  }
+
+  .modal-content.settings-content {
+    width: 100%;
+    max-height: 100%;
+    padding: 0 var(--space-md);
+    gap: 0;
+    border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+  }
+
+  /* Title stays put while you scroll */
+  .modal-content.settings-content > h3 {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    margin: 0 calc(var(--space-md) * -1);
+    padding: var(--space-md);
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border-color);
+    font-size: var(--font-size-lg);
+  }
+
+  /* "Done" stays reachable instead of living at the very bottom of a long scroll */
+  .modal-content.settings-content > .modal-buttons {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    margin: var(--space-md) calc(var(--space-md) * -1) 0;
+    padding: var(--space-sm) var(--space-md)
+      calc(var(--space-sm) + env(safe-area-inset-bottom, 0px));
+    background: var(--bg-surface);
+    border-top: 1px solid var(--border-color);
+  }
+
+  /* Each section is its own card, so groups read as groups */
+  .modal-content.settings-content .settings-section {
+    margin-top: var(--space-md);
+    padding: var(--space-md);
+    background: var(--bg-app);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+  }
+
+  .modal-content.settings-content .settings-section h4 {
+    margin-bottom: var(--space-xs);
+    font-size: var(--font-size-md);
+  }
+
+  .modal-content.settings-content .settings-desc {
+    margin: 0 0 var(--space-sm);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+  }
+
+  .modal-content.settings-content .settings-desc:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Fields sit on the card, so they use the lighter surface to stay visible */
+  .modal-content.settings-content .settings-section input:not([type="checkbox"]):not([type="range"]),
+  .modal-content.settings-content .settings-section .library-select {
+    background-color: var(--bg-surface);
+    min-height: 44px;
+  }
+
+  /* Crossfade slider was getting the text-input box (border + padding) */
+  .modal-content.settings-content input[type="range"] {
+    background: transparent;
+    border: none;
+    padding: 0;
+    height: 28px;
+  }
+
+  /* Pair form: address and code were touching */
+  #pc-sync-pair-block {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  /* Toggle rows: label left, switch right (same as the Sleep Timer row) */
+  .modal-content.settings-content .transfer-auto-row {
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    min-height: 44px;
+    margin-bottom: var(--space-xs);
+  }
+
+  .modal-content.settings-content .transfer-auto-label {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* Remote control */
+  #remote-control-section .remote-state-row .primary-btn {
+    padding: 8px var(--space-md);
+    font-size: 0.8125rem;
+  }
+
+  .remote-qr-row {
+    justify-content: center;
+  }
+
+  #remote-qr-canvas {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Buttons: pairs share a row instead of every button being a full-width bar */
+  .modal-content.settings-content .settings-export-buttons,
+  .modal-content.settings-content .data-management-actions {
+    gap: var(--space-xs);
+  }
+
+  .modal-content.settings-content .settings-export-buttons > button,
+  .modal-content.settings-content .data-management-actions > button {
+    flex: 1 1 calc(50% - var(--space-xs));
+    min-width: 0;
+    min-height: 44px;
+    padding: 10px var(--space-sm);
+    font-size: 0.8125rem;
+    justify-content: center;
+    white-space: nowrap;
+  }
+
+  #export-songs-btn,
+  #import-json-btn {
+    flex-basis: 100% !important;
+  }
+
+  /* Transfer buttons have longer labels, so they keep a full row each */
+  .modal-content.settings-content .transfer-actions {
+    gap: var(--space-xs);
+    margin-bottom: var(--space-sm);
+  }
+
+  /* Stats: 3 across, tighter */
+  .modal-content.settings-content .settings-stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-xs);
+  }
+
+  .modal-content.settings-content .stat-pill {
+    padding: var(--space-sm) var(--space-2xs);
+    background: var(--bg-surface);
+  }
+
+  .modal-content.settings-content .stat-num {
+    font-size: 1.25rem;
+  }
+}
+
+
+/* ==========================================================================
+   No horizontal scrolling anywhere (desktop, Windows, iPhone, Android).
+   Lists and panels scroll up/down only. Not part of the animations toggle.
+   ========================================================================== */
+html,
+body,
+#app-container,
+#main-view,
+.playlist-container,
+.playlist-content,
+#playlist-content,
+.playlists-grid,
+.yt-search-panel,
+.yt-search-results,
+.yt-result-scroll,
+.queue-panel-body,
+.lyrics-body,
+.modal-content,
+.context-menu {
+  overflow-x: hidden;
+  overscroll-behavior-x: none; /* no sideways rubber-band / back-swipe chaining */
+}
+
+/* Touch: the scrolling lists only accept vertical panning, so a sideways
+   drag can never move them on iPhone/Android. (Not applied to modals, which
+   contain sliders that need horizontal dragging.) */
+.playlist-content,
+#playlist-content,
+.yt-result-scroll,
+.lyrics-body {
+  touch-action: pan-y;
+}
+
+/* ==========================================================================
+   MOBILE PLAYER DRAWER
+   The extras (visualizer, lyrics, queue, mute) leave the mini-player and
+   slide up from its top edge. Starts closed; the chevron handle toggles the
+   .extras-open class on #player-controls (js/player-drawer.js).
+   Appended last on purpose; nothing above needs to change.
+   ========================================================================== */
+
+/* Desktop: the handle does not exist */
+.extras-drawer-toggle {
+  display: none;
+}
+
+@media (max-width: 720px) {
+
+  /* Mini-player is now just: handle / now-playing + transport / seek bar */
+  #player-controls {
+    position: relative;
+    grid-template-areas:
+      "handle handle"
+      "np     btns"
+      "prog   prog";
+    padding-top: 0;
+  }
+
+  .extras-drawer-toggle {
+    grid-area: handle;
+    justify-self: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 72px;
+    height: 22px;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+
+  .extras-drawer-toggle:active {
+    color: var(--text-main);
+  }
+
+  .extras-drawer-toggle i {
+    transition: transform 0.25s ease;
+  }
+
+  .extras-drawer-toggle[aria-expanded="true"] i {
+    transform: rotate(180deg);
+  }
+
+  /* The drawer itself: sits directly above the mini-player */
+  #player-controls .extra-controls {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 100%;
+    width: auto;
+    margin: 0;
+    padding: var(--space-xs) var(--space-md);
+    justify-content: space-around;
+    background-color: var(--bg-sidebar);
+    border-top: 1px solid var(--border-color);
+    border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.35);
+
+    /* closed */
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(12px);
+    transition: transform 0.25s ease, opacity 0.2s ease, visibility 0s linear 0.25s;
+  }
+
+  #player-controls.extras-open .extra-controls {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+    transition: transform 0.25s ease, opacity 0.2s ease, visibility 0s;
+  }
+
+  /* Evenly spaced now, so cancel the "push to the right" from earlier */
+  #player-controls .extra-controls #lyrics-toggle-btn {
+    margin-left: 0;
+  }
+}

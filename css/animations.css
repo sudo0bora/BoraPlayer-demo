@@ -1,0 +1,351 @@
+/* ==========================================================================
+   Animations (optional)
+   Everything that MOVES lives behind html[data-animations="on"], which
+   js/animations.js sets from the Settings toggle (saved as 'bora_animations').
+   With it off, none of these rules match, so the app is exactly as before.
+   Nothing here changes layout; only opacity / transform / box-shadow.
+   ========================================================================== */
+
+/* ---- Settings toggle row (always visible; not an animation) ---- */
+.settings-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--border-color);
+}
+
+.settings-toggle-text label {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--text-main);
+  font-size: 0.9rem;
+}
+
+.settings-toggle-text .settings-desc {
+  margin: 0;
+}
+
+/* ---- Keyframes ---- */
+@keyframes anim-row-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes anim-card-in {
+  from { opacity: 0; transform: translateY(14px) scale(0.95); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes anim-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes anim-modal-pop {
+  from { opacity: 0; transform: translateY(16px) scale(0.96); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes anim-sheet-up {
+  from { transform: translateY(100%); }
+  to   { transform: none; }
+}
+@keyframes anim-menu-pop {
+  from { opacity: 0; transform: scale(0.92) translateY(-4px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes anim-menu-sheet {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes anim-toast-in {
+  from { opacity: 0; transform: translateX(28px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes anim-toast-drop {
+  from { opacity: 0; transform: translateY(-18px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes anim-title-swap {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes anim-art-swap {
+  from { opacity: 0.2; transform: scale(0.82) rotate(-5deg); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes anim-info-swap {
+  from { opacity: 0; transform: translateY(7px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes anim-icon-pop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.35); }
+  100% { transform: scale(1); }
+}
+
+/* Rows nudge sideways on hover and cards lift; that must never create a
+   horizontal scrollbar on the list. */
+html[data-animations="on"] .playlist-content,
+html[data-animations="on"] .yt-result-scroll {
+  overflow-x: hidden;
+}
+
+/* ---- Lists & grids: play when the view changes (js adds .anim-enter) ---- */
+html[data-animations="on"] .anim-enter .track-row {
+  animation: anim-row-in 0.34s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+  animation-delay: 280ms; /* rows past the 12th just appear together */
+}
+.anim-enter .track-row:nth-child(1) { animation-delay: 22ms; }
+.anim-enter .track-row:nth-child(2) { animation-delay: 44ms; }
+.anim-enter .track-row:nth-child(3) { animation-delay: 66ms; }
+.anim-enter .track-row:nth-child(4) { animation-delay: 88ms; }
+.anim-enter .track-row:nth-child(5) { animation-delay: 110ms; }
+.anim-enter .track-row:nth-child(6) { animation-delay: 132ms; }
+.anim-enter .track-row:nth-child(7) { animation-delay: 154ms; }
+.anim-enter .track-row:nth-child(8) { animation-delay: 176ms; }
+.anim-enter .track-row:nth-child(9) { animation-delay: 198ms; }
+.anim-enter .track-row:nth-child(10) { animation-delay: 220ms; }
+.anim-enter .track-row:nth-child(11) { animation-delay: 242ms; }
+.anim-enter .track-row:nth-child(12) { animation-delay: 264ms; }
+
+html[data-animations="on"] .anim-enter .playlists-grid > * {
+  animation: anim-card-in 0.42s cubic-bezier(0.2, 0.9, 0.25, 1.1) backwards;
+  animation-delay: 420ms;
+}
+.anim-enter .playlists-grid > :nth-child(1) { animation-delay: 35ms; }
+.anim-enter .playlists-grid > :nth-child(2) { animation-delay: 70ms; }
+.anim-enter .playlists-grid > :nth-child(3) { animation-delay: 105ms; }
+.anim-enter .playlists-grid > :nth-child(4) { animation-delay: 140ms; }
+.anim-enter .playlists-grid > :nth-child(5) { animation-delay: 175ms; }
+.anim-enter .playlists-grid > :nth-child(6) { animation-delay: 210ms; }
+.anim-enter .playlists-grid > :nth-child(7) { animation-delay: 245ms; }
+.anim-enter .playlists-grid > :nth-child(8) { animation-delay: 280ms; }
+.anim-enter .playlists-grid > :nth-child(9) { animation-delay: 315ms; }
+.anim-enter .playlists-grid > :nth-child(10) { animation-delay: 350ms; }
+.anim-enter .playlists-grid > :nth-child(11) { animation-delay: 385ms; }
+.anim-enter .playlists-grid > :nth-child(12) { animation-delay: 420ms; }
+
+/* Only the first screenful animates in. Rows and cards past the 12th (the
+   next batches that load while scrolling, or a redraw) must appear at once:
+   with the delay above they sat invisible, then popped in mid-scroll, which
+   looked stuck on iPhone. */
+html[data-animations="on"] .anim-enter .track-row:nth-child(n+13),
+html[data-animations="on"] .anim-enter .playlists-grid > :nth-child(n+13) {
+  animation: none;
+}
+
+html[data-animations="on"] .title-swap {
+  animation: anim-title-swap 0.38s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* ---- Dialogs, menus, toasts ---- */
+html[data-animations="on"] .modal-overlay:not(.hidden) {
+  animation: anim-fade 0.2s ease-out;
+}
+html[data-animations="on"] .modal-overlay:not(.hidden) .modal-content {
+  animation: anim-modal-pop 0.3s cubic-bezier(0.2, 0.9, 0.25, 1.08);
+}
+html[data-animations="on"] .modal-overlay:not(.hidden) .stat-pill {
+  animation: anim-card-in 0.4s cubic-bezier(0.2, 0.9, 0.25, 1.1) backwards;
+}
+.modal-overlay:not(.hidden) .stat-pill:nth-child(1) { animation-delay: 175ms; }
+.modal-overlay:not(.hidden) .stat-pill:nth-child(2) { animation-delay: 230ms; }
+.modal-overlay:not(.hidden) .stat-pill:nth-child(3) { animation-delay: 285ms; }
+.modal-overlay:not(.hidden) .stat-pill:nth-child(4) { animation-delay: 340ms; }
+.modal-overlay:not(.hidden) .stat-pill:nth-child(5) { animation-delay: 395ms; }
+
+html[data-animations="on"] .context-menu:not(.hidden) {
+  transform-origin: top left;
+  animation: anim-menu-pop 0.16s ease-out;
+}
+
+html[data-animations="on"] .toast {
+  animation: anim-toast-in 0.35s cubic-bezier(0.2, 0.9, 0.25, 1.1);
+}
+
+/* RenderActivity finishes finite entrances and pauses repeating effects.
+   Blanket CSS pausing can otherwise strand newly loaded content half faded. */
+html[data-render-active="false"] *, html[data-render-active="false"] *::before, html[data-render-active="false"] *::after { transition: none !important; }
+
+/* ---- Navigation ---- */
+html[data-animations="on"] .sidebar-nav li.active .nav-icon {
+  animation: anim-icon-pop 0.42s ease-out;
+}
+
+/* ---- Player ---- */
+html[data-animations="on"] .now-playing.is-changing .album-art-placeholder {
+  animation: anim-art-swap 0.5s cubic-bezier(0.2, 0.9, 0.25, 1.1);
+}
+html[data-animations="on"] .now-playing.is-changing .track-info {
+  animation: anim-info-swap 0.45s ease-out;
+}
+
+/* The glow on the mini-player art and the playing row is NOT a CSS animation:
+   js/animations.js drives it from the bass level so it hits on the beat
+   (same technique as the fullscreen thumbnail). Nothing glows on pause/play. */
+
+/* Buttons that switch something on give a little pop */
+html[data-animations="on"] #lyrics-toggle-btn[aria-expanded="true"] i,
+html[data-animations="on"] #visualizer-toggle-btn[data-active="true"] i {
+  animation: anim-icon-pop 0.38s ease-out;
+}
+
+html[data-animations="on"] #shuffle-btn:active i,
+html[data-animations="on"] #repeat-btn:active i {
+  transform: rotate(18deg) scale(0.9);
+}
+
+html[data-animations="on"] .control-btn {
+  transition: color var(--transition-fast), background-color var(--transition-fast), transform 0.15s cubic-bezier(0.2, 0.9, 0.25, 1.3);
+}
+html[data-animations="on"] .control-btn:active:not(.play-main) {
+  transform: scale(0.86);
+}
+
+html[data-animations="on"] .favorite-icon,
+html[data-animations="on"] .pinned-icon {
+  transition: color 0.2s, transform 0.18s cubic-bezier(0.2, 0.9, 0.25, 1.4);
+}
+html[data-animations="on"] .favorite-icon:active,
+html[data-animations="on"] .pinned-icon:active {
+  transform: scale(1.45);
+}
+
+html[data-animations="on"] .lyrics-line {
+  transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+html[data-animations="on"] .lyrics-item.is-active .lyrics-line {
+  transform: translateX(5px);
+}
+
+/* ---- Library / YouTube switch: a sliding pill instead of a hard swap ----
+   Pure CSS. Buttons share the width equally so the pill is exactly half. */
+html[data-animations="on"] .search-mode-switch {
+  position: relative;
+}
+html[data-animations="on"] .search-mode-switch::before {
+  content: "";
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 3px;
+  width: calc((100% - 8px) / 2);
+  border-radius: var(--border-radius-full, 9999px);
+  background: var(--primary, #1db954);
+  box-shadow: 0 0 14px rgba(29, 185, 84, 0.35);
+  transform: translateX(0);
+  transition: transform 0.34s cubic-bezier(0.3, 0.9, 0.3, 1.15);
+  pointer-events: none;
+}
+html[data-animations="on"] .search-mode-switch:has(.search-mode-btn:nth-child(2).is-active)::before {
+  transform: translateX(calc(100% + 2px));
+}
+html[data-animations="on"] .search-mode-btn {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 0;
+  min-width: 0;
+  justify-content: center;
+  transition: color 0.25s ease;
+}
+html[data-animations="on"] .search-mode-btn.is-active {
+  background: transparent;
+  color: #000;
+}
+html[data-animations="on"] .search-mode-btn i {
+  transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.25, 1.4);
+}
+html[data-animations="on"] .search-mode-btn.is-active i {
+  transform: scale(1.15);
+}
+
+/* Search bar / filters fade in when the switch swaps them */
+@keyframes anim-toolbar-in {
+  from { opacity: 0; transform: translateY(-5px); }
+  to   { opacity: 1; transform: none; }
+}
+html[data-animations="on"] .library-toolbar .search-bar-wrap,
+html[data-animations="on"] .library-toolbar .library-filters {
+  animation: anim-toolbar-in 0.28s ease-out;
+}
+
+/* ---- YouTube search results ---- */
+@keyframes anim-result-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: none; }
+}
+html[data-animations="on"] .yt-result {
+  animation: anim-result-in 0.34s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+}
+html[data-animations="on"] .yt-result:nth-child(1) { animation-delay: 0ms; }
+html[data-animations="on"] .yt-result:nth-child(2) { animation-delay: 55ms; }
+html[data-animations="on"] .yt-result:nth-child(3) { animation-delay: 110ms; }
+html[data-animations="on"] .yt-result:nth-child(4) { animation-delay: 165ms; }
+html[data-animations="on"] .yt-result:nth-child(5) { animation-delay: 220ms; }
+html[data-animations="on"] .yt-result:nth-child(6) { animation-delay: 275ms; }
+html[data-animations="on"] .yt-search-message,
+html[data-animations="on"] .yt-pager {
+  animation: anim-fade 0.3s ease-out;
+}
+
+/* ---- Hover polish (mouse only, so touch screens don't get stuck states) ---- */
+@media (hover: hover) {
+  html[data-animations="on"] .track-row {
+    transition: background-color var(--transition-fast), transform 0.2s ease;
+  }
+  html[data-animations="on"] .track-row:hover {
+    transform: translateX(3px);
+  }
+  html[data-animations="on"] .playlist-card,
+  html[data-animations="on"] .artist-card-item {
+    transition: transform 0.25s cubic-bezier(0.2, 0.9, 0.25, 1.1), box-shadow 0.25s ease, background-color 0.2s ease, border-color 0.2s ease;
+  }
+  html[data-animations="on"] .playlist-card:hover,
+  html[data-animations="on"] .artist-card-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(29, 185, 84, 0.35);
+  }
+  html[data-animations="on"] .primary-btn:hover {
+    box-shadow: 0 0 18px rgba(29, 185, 84, 0.4);
+  }
+}
+
+/* ---- Phones: sheets slide up, toasts drop in from the top ---- */
+@media (max-width: 720px) {
+  html[data-animations="on"] .modal-overlay:not(.hidden) .modal-content {
+    animation: anim-modal-pop 0.3s cubic-bezier(0.2, 0.9, 0.25, 1.08);
+  }
+  html[data-animations="on"] .modal-overlay:has(> .settings-content):not(.hidden) .settings-content {
+    animation: anim-sheet-up 0.38s cubic-bezier(0.2, 0.85, 0.25, 1);
+  }
+  html[data-animations="on"] .context-menu:not(.hidden) {
+    transform-origin: bottom center;
+    animation: anim-menu-sheet 0.26s cubic-bezier(0.2, 0.85, 0.25, 1);
+  }
+  html[data-animations="on"] .toast {
+    animation: anim-toast-drop 0.35s cubic-bezier(0.2, 0.9, 0.25, 1.1);
+  }
+}
+
+/* ---- Phones: calm ripple on the mini-player art while playing ----
+   Replaces the bass-driven glow on small screens (js/animations.js skips it
+   there). Lives on a pseudo-element so it never fights the track-change
+   swap animation on the art itself. Stops when paused or animations are off. */
+@keyframes anim-art-ripple {
+  0%   { box-shadow: 0 0 0 0 rgba(29, 185, 84, 0.4); }
+  70%  { box-shadow: 0 0 0 9px rgba(29, 185, 84, 0); }
+  100% { box-shadow: 0 0 0 9px rgba(29, 185, 84, 0); }
+}
+@media (max-width: 720px) {
+  html[data-animations="on"][data-playing="true"] .now-playing .album-art-placeholder {
+    position: relative;
+  }
+  html[data-animations="on"][data-playing="true"] .now-playing .album-art-placeholder::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    animation: anim-art-ripple 2.6s ease-out infinite;
+  }
+}

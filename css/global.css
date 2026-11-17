@@ -1,0 +1,179 @@
+/* ==========================================================================
+   Global CSS Variables & Tokens
+   ========================================================================== */
+:root {
+  /* Color Palette - Dark Modern Theme */
+  --bg-app: #121214;
+  --bg-sidebar: #18181c;
+  --bg-surface: #202026;
+  --bg-surface-hover: #2a2a32;
+  --bg-surface-active: #34343e;
+  
+  --primary: #1db954;
+  --primary-hover: #1ed760;
+  --primary-active: #169c46;
+  --primary-alpha: rgba(29, 185, 84, 0.15);
+
+  --text-main: #f0f0f3;
+  --text-muted: #8e8e99;
+  --text-subtle: #5c5c66;
+
+  --border-color: rgba(255, 255, 255, 0.08);
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  --border-radius-full: 9999px;
+
+  /* Dimensions */
+  --sidebar-width: 220px;
+  --player-height: 80px;
+
+  /* Typography */
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-size-xs: 0.75rem;   /* 12px */
+  --font-size-sm: 0.875rem;  /* 14px */
+  --font-size-md: 1rem;      /* 16px */
+  --font-size-lg: 1.25rem;   /* 20px */
+  --font-size-xl: 1.5rem;    /* 24px */
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 600;
+
+  /* Spacing */
+  --space-2xs: 4px;
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease;
+}
+
+/* ==========================================================================
+   CSS Reset & Desktop Baseline
+   ========================================================================== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100vh; /* fallback for browsers without dvh support */
+  height: 100dvh; /* iOS Safari's 100vh includes the address bar's retracted max height, leaving content pushed below the real visible viewport */
+  overflow: hidden; /* Prevents global page scroll */
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  font-family: var(--font-family);
+  font-size: 16px;
+  line-height: 1.5;
+
+  /* Prevent text highlighting to keep desktop feel */
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Master Layout Frame */
+#app-container {
+  display: grid;
+  grid-template-columns: var(--sidebar-width) 1fr;
+  /* Extra bottom row-height accounts for the home-indicator safe area on
+     notched iOS devices (viewport-fit=cover in index.html lets content
+     draw under it, so this reserves the space back). Resolves to 0 on
+     everything else. */
+  grid-template-rows: 1fr calc(var(--player-height) + env(safe-area-inset-bottom, 0px));
+  grid-template-areas:
+    "sidebar main"
+    "player  player";
+  width: 100vw;
+  height: 100vh; /* fallback for browsers without dvh support */
+  height: 100dvh;
+}
+
+/* Interactive Elements Base Reset */
+button {
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  outline: none;
+}
+/* Generic utility hidden class. Several modules (converter buttons, progress
+   panels, etc.) toggle a bare "hidden" class via JS with no other class
+   attached to it — this rule is what actually makes that work. Without it,
+   classList.add('hidden') silently does nothing unless some other, more
+   specific selector happens to also match the element.
+
+   Selector is `.hidden.hidden`, not just `.hidden`. Repeating the class
+   doesn't change what it matches, but it doubles the selector's specificity
+   to (0,2,0). That's needed because features.css — loaded AFTER this file —
+   defines .danger-btn / .primary-btn / .secondary-btn with
+   `display: inline-flex`, at the same (0,1,0) specificity a plain `.hidden`
+   would have. On a tie, the later stylesheet wins the cascade, so a plain
+   `.hidden` loses to those button classes no matter what state gets
+   toggled — which is exactly what was happening.
+
+   Deliberately still NOT !important: the playlist progress panel
+   (#converter-progress-container) is shown by setting inline
+   style.display = 'block' directly, without ever removing this class.
+   Inline styles beat any non-!important selector regardless of
+   specificity, so this stays correctly overridable for that case. */
+.hidden.hidden {
+  display: none;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ==========================================================================
+   Custom Scrollbars
+   ========================================================================== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bg-surface-active);
+  border-radius: var(--border-radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}

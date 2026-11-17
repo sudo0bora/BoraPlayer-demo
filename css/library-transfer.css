@@ -1,0 +1,43 @@
+/* ==========================================================================
+   Library Transfer (PC -> phone) Settings controls
+   ========================================================================== */
+
+.transfer-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+/* Spacing between the existing YouTube "Sync from PC" buttons and the new
+   transfer buttons on the phone. */
+.transfer-heading {
+    margin-top: 16px;
+}
+
+@media (max-width: 720px) {
+    .transfer-actions .primary-btn,
+    .transfer-actions .secondary-btn {
+        flex: 1 1 100%;
+        justify-content: center;
+    }
+}
+
+/* Automatic connect / sync controls */
+.transfer-auto-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.transfer-auto-label {
+    color: var(--text-main, #f0f0f3);
+    font-size: var(--font-size-sm);
+}
+
+/* .library-select reserves left room for a filter icon; none is used here. */
+.library-select.transfer-auto-select {
+    flex: 1 1 auto;
+    padding-left: 12px;
+}

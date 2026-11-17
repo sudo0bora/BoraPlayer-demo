@@ -1,0 +1,95 @@
+/* App colors, layout, cards and controls come directly from the shared CSS. */
+[hidden] { display: none !important; }
+.demo-pill { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--primary); border: 1px solid #1db95450; border-radius: 20px; padding: 6px 10px; white-space: nowrap; }
+.demo-notice { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 12px; color: var(--text-muted); }
+.demo-text-button { color: var(--primary); font: inherit; background: transparent; border: 0; cursor: pointer; padding: 8px 0; }
+.demo-toolbar { display: flex; gap: 12px; align-items: start; }
+.demo-toolbar .music-search-form { flex: 1; margin: 0; }
+#demo-tabs { margin: 0; }
+#demo-content { padding-bottom: 32px; }
+#demo-content .music-shelf { margin-bottom: 32px; }
+.music-card-art { position: relative; aspect-ratio: 1; overflow: hidden; }
+.music-card-art > img { width: 100%; height: 100%; object-fit: cover; }
+.demo-cover-button { position: absolute; inset: 0; width: 100%; height: 100%; background: transparent; border: 0; cursor: pointer; }
+.demo-cover-button::after { content: '▶'; position: absolute; right: 12px; bottom: 12px; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: var(--primary); color: #101411; opacity: 0; transition: opacity .15s; }
+.music-card:hover .demo-cover-button::after, .demo-cover-button:focus-visible::after { opacity: 1; }
+.demo-card-actions { display: flex; gap: 8px; margin-top: 6px; }
+.demo-card-actions button { min-width: 32px; min-height: 32px; padding: 4px 8px; background: var(--bg-surface); color: var(--text-muted); border-radius: 8px; font-size: 14px; }
+.demo-card-actions button[aria-pressed="true"] { color: var(--primary); }
+.demo-row { display: flex; align-items: center; gap: 12px; padding: 12px 4px; border-bottom: 1px solid var(--border-color); }
+.demo-row > button:first-child { display: flex; gap: 14px; align-items: center; flex: 1; min-width: 0; background: transparent; color: var(--text-main); text-align: left; }
+.demo-row img, .demo-row .track-sponsored-art { width: 48px; height: 48px; flex: 0 0 48px; border-radius: 8px; }
+.demo-row strong, .demo-row small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.demo-row small { color: var(--text-muted); font-size: 12px; }
+.demo-row span { min-width: 0; }
+.demo-row .ad-thumbnail { position: static; }
+.demo-row.is-playing strong { color: var(--primary); }
+.demo-empty { padding: 32px 4px; color: var(--text-muted); }
+.demo-playlist-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.demo-playlist-header h2 { font-size: 22px; }
+.demo-playlist-card { min-height: 140px; justify-content: end; text-align: left; background: linear-gradient(145deg, #1db95428, var(--bg-surface)); }
+.demo-settings { max-width: 700px; }
+.demo-settings > div { background: var(--bg-sidebar); border: 1px solid var(--border-color); border-radius: 18px; padding: 24px; margin-bottom: 20px; }
+.demo-settings h2 { margin-bottom: 12px; }
+.demo-settings p { color: var(--text-muted); margin: 12px 0; }
+.demo-settings button { margin: 6px 8px 6px 0; }
+.demo-library-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+.demo-library-tabs button { padding: 8px 14px; border: 1px solid var(--border-color); border-radius: 24px; color: var(--text-muted); }
+.demo-library-tabs button[aria-pressed="true"] { color: var(--primary); border-color: var(--primary); }
+#demo-status { position: fixed; bottom: 126px; left: 50%; transform: translateX(-50%); background: var(--bg-surface); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 12px; padding: 12px 18px; z-index: 2500; font-size: 13px; max-width: min(90vw, 540px); box-shadow: 0 8px 30px #0005; }
+#demo-status:empty { display: none; }
+dialog { width: min(600px, calc(100vw - 32px)); max-height: calc(100dvh - 40px); margin: auto; padding: 32px; color: var(--text-main); background: var(--bg-sidebar); border: 1px solid var(--border-color); border-radius: 22px; overflow: auto; }
+dialog::backdrop { background: #000a; backdrop-filter: blur(6px); }
+dialog h2 { font-size: 30px; letter-spacing: -1px; margin: 14px 0; }
+dialog p, dialog li { font-size: 14px; line-height: 1.65; color: var(--text-muted); margin: 12px 0; }
+dialog strong { color: var(--text-main); }
+dialog ol { padding-left: 20px; }
+.demo-dialog-close { float: right; }
+.demo-eyebrow { color: var(--primary); font-size: 10px; letter-spacing: .14em; }
+dialog .demo-fineprint { font-size: 12px; border-top: 1px solid var(--border-color); padding-top: 16px; }
+#demo-stage { position: fixed; inset: 0; z-index: 1000; background: var(--bg-app); padding: 20px 5vw; overflow: auto; }
+#demo-stage > header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 28px; }
+#demo-stage > header > div { text-align: center; }
+#demo-stage header small, #demo-stage header strong { display: block; font-size: 11px; letter-spacing: .08em; }
+#demo-stage header small { color: var(--text-muted); font-size: 9px; }
+.demo-stage-grid { display: grid; grid-template-columns: minmax(200px, 520px) minmax(250px, 480px); gap: 6vw; justify-content: center; align-items: center; }
+.demo-stage-art { position: relative; border-radius: 22px; overflow: hidden; aspect-ratio: 1; background: #09090b; }
+.demo-stage-art img, .demo-stage-art video { width: 100%; height: 100%; object-fit: contain; }
+#demo-media { position: absolute; inset: 0; visibility: hidden; }
+.video-mode #demo-media { visibility: visible; }
+.video-mode #demo-stage-cover { visibility: hidden; }
+.demo-stage-details h2 { font-size: clamp(24px, 3vw, 38px); letter-spacing: -1px; }
+#demo-stage-artist { color: var(--text-muted); margin: 8px 0 24px; }
+#demo-stage-controls .playback-controls { width: 100%; max-width: none; margin-bottom: 22px; }
+#demo-stage-controls .player-song-actions { display: none; }
+.demo-panel-tabs { display: flex; gap: 24px; }
+#demo-stage-panel { max-height: 180px; overflow-y: auto; color: var(--text-muted); font-size: 13px; }
+.demo-visual { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; gap: 40px; background: radial-gradient(ellipse at 30% 30%, #1db95435, #0e1014); }
+.demo-visual p { font-size: 11px; color: var(--text-muted); }
+.demo-wave { width: 180px; height: 180px; border: 2px solid #1db95480; border-radius: 38%; animation: demo-orbit 12s linear infinite; box-shadow: 0 0 80px #1db95430, inset 0 0 60px #1db95430; }
+@keyframes demo-orbit { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .demo-wave { animation: none; } }
+@media (max-width: 720px) {
+  .demo-pill { display: none; }
+  .demo-notice { align-items: start; font-size: 11px; }
+  .demo-notice span { max-width: 200px; }
+  .demo-toolbar { flex-wrap: wrap; gap: 8px; }
+  .demo-toolbar .music-search-form { flex-basis: 100%; }
+  .demo-toolbar #demo-add { font-size: 12px; padding: 6px 10px; }
+  #main-view { gap: 12px; }
+  #demo-content { padding-bottom: 100px; }
+  #demo-content .music-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .demo-card-actions { grid-column: 1 / -1; }
+  .demo-card-actions button { min-height: 36px; }
+  .demo-cover-button::after { opacity: 1; width: 32px; height: 32px; font-size: 12px; }
+  .demo-stage-grid { grid-template-columns: minmax(0, 1fr); gap: 22px; max-width: 520px; margin: auto; }
+  .demo-stage-art { width: min(100%, 40dvh); margin: auto; }
+  #demo-stage { padding: calc(12px + env(safe-area-inset-top, 0px)) 20px 30px; }
+  #demo-stage > header { margin-bottom: 20px; }
+  #demo-stage-controls .progress-container { display: flex; }
+  #demo-stage-controls .buttons { justify-content: center; }
+  #demo-stage-controls .buttons button { display: inline-flex !important; }
+  #demo-stage-controls .playback-controls { display: flex; flex-direction: column; gap: 8px; }
+  #demo-status { bottom: 158px; }
+  dialog { padding: 24px; }
+}

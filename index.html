@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'none'; font-src 'self'; frame-src 'none'; worker-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="description" content="Try BoraPlayer: an interactive, browser-local music player demo with sample music, local file playback and preview advertising placements. No sign-in or cloud connection.">
+  <meta name="referrer" content="no-referrer">
+  <title>BoraPlayer — Interactive demo</title>
+  <link rel="stylesheet" href="css/global.css">
+<link rel="stylesheet" href="css/sidebar.css">
+<link rel="stylesheet" href="css/player.css">
+<link rel="stylesheet" href="css/controls.css">
+<link rel="stylesheet" href="css/themes.css">
+<link rel="stylesheet" href="css/features.css">
+<link rel="stylesheet" href="css/lyrics.css">
+<link rel="stylesheet" href="css/remote-control.css">
+<link rel="stylesheet" href="css/visualizer.css">
+<link rel="stylesheet" href="css/ads.css">
+<link rel="stylesheet" href="css/youtube-sync.css">
+<link rel="stylesheet" href="css/youtube-search.css">
+<link rel="stylesheet" href="css/library-transfer.css">
+<link rel="stylesheet" href="css/responsive.css">
+<link rel="stylesheet" href="css/animations.css">
+<link rel="stylesheet" href="css/music-browse.css">
+<link rel="stylesheet" href="css/experience.css">
+<link rel="stylesheet" href="css/range-motion.css">
+<link rel="stylesheet" href="css/ios-landscape.css">
+<link rel="stylesheet" href="vendor/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="demo.css">
+  <script src="js/ads.js" defer></script>
+  <script src="demo.js" defer></script>
+</head>
+<body>
+<div id="app-container">
+  <aside id="sidebar">
+                <div class="sidebar-header">
+                    <h2>Bora Player</h2>
+                </div>
+                <nav class="sidebar-nav">
+                    <ul id="nav-links">
+                        <li data-view="browse" class="music-nav active" tabindex="0" role="button"><i class="fa-solid fa-compass nav-icon" aria-hidden="true"></i><span class="nav-label">Discover</span></li>
+                        <li data-view="online-library"><i class="fa-solid fa-record-vinyl nav-icon" aria-hidden="true"></i><span class="nav-label">Library</span></li>
+                        <li data-view="library"><i class="fa-solid fa-download nav-icon" aria-hidden="true"></i><span class="nav-label">Downloads</span></li>
+                        <li data-view="settings" id="settings-btn"><i class="fa-solid fa-gear nav-icon" aria-hidden="true"></i><span class="nav-label">Settings</span></li>
+                    </ul>
+                </nav>
+                <!-- Reserved advertising space (development placeholder only —
+                     see js/ads.js). Not part of the nav list, not a Library
+                     item, not tied to any account/Premium state yet. -->
+                <div id="sidebar-ad-slot" class="ad-slot" data-ad-slot="sidebar-ad-1" aria-hidden="true"></div>
+                <div class="sidebar-footer"><button id="demo-sidebar-help" class="sidebar-footer-btn">About the demo ↗</button><span class="demo-pill">Browser local · No login</span></div>
+            </aside>
+  <main id="main-view">
+    <header class="view-header"><h1 id="view-title">Discover</h1><span class="demo-pill">Interactive demo</span><button id="demo-help" class="profile-button" aria-label="About this demo">?</button></header>
+    <div class="demo-notice"><span>Explore the player. Everything stays in this browser.</span><button id="demo-tour" class="demo-text-button">Show me around ↗</button></div>
+    <div class="demo-toolbar"><form id="demo-search-form" class="music-search-form"><input id="demo-search" class="search-input" type="search" maxlength="200" placeholder="Search songs, artists…" aria-label="Search demo music"><button class="primary-btn" type="submit">Search</button></form><button id="demo-add" class="secondary-btn">＋ Add local files</button><input id="demo-files" type="file" accept="audio/*,video/mp4,video/webm" multiple hidden></div>
+    <nav id="demo-tabs" class="music-tabs" aria-label="Discovery category"><button data-tab="for-you" aria-pressed="true">For You</button><button data-tab="explore" aria-pressed="false">Explore</button><button data-tab="trending" aria-pressed="false">Trending</button><button data-tab="radio" aria-pressed="false">Radio</button></nav>
+    <section id="demo-content" class="music-browse" aria-label="Music collection"></section>
+  </main>
+  <footer id="player-controls">
+                
+                <div class="now-playing">
+                    <div class="album-art-placeholder" id="current-album-art"><i class="fa-solid fa-music"></i></div>
+                    <div class="track-info">
+                        <span class="track-name" id="current-track-name">No track selected</span>
+                        <span class="track-artist" id="current-track-artist">-</span>
+                    </div>
+                </div>
+                <div class="playback-controls">
+                    <div class="buttons">
+                        <button id="shuffle-btn" class="control-btn" title="Shuffle: Off"><i class="fa-solid fa-shuffle"></i></button>
+                        <button id="prev-btn" class="control-btn" title="Previous Track"><i class="fa-solid fa-backward-step"></i></button>
+                        <button id="play-btn" class="control-btn play-main" title="Play/Pause"><i class="fa-solid fa-play"></i></button>
+                        <button id="next-btn" class="control-btn" title="Next Track"><i class="fa-solid fa-forward-step"></i></button>
+                        <button id="repeat-btn" class="control-btn" title="Repeat: Off"><i class="fa-solid fa-repeat"></i></button>
+                    </div>
+                    <div class="progress-container">
+                        <span id="time-current">0:00</span>
+                        <input type="range" id="seek-bar" min="0" max="100" step="0.1" value="0" aria-label="Seek" />
+                        <span id="time-total">0:00</span>
+                    </div>
+                    <div class="player-song-actions" aria-label="Current song actions">
+                        <button id="player-download" type="button" class="song-action-btn" aria-label="Download current song" disabled><i class="fa-solid fa-download" aria-hidden="true"></i></button>
+                        <button id="player-save" type="button" class="song-action-btn" aria-label="Save current song to Library" aria-pressed="false" disabled><span class="library-toggle-icon" aria-hidden="true"><i class="fa-solid fa-circle-plus library-add"></i><i class="fa-solid fa-circle-minus library-remove"></i></span></button>
+                        <span id="player-radio-actions" class="player-radio-actions" hidden>
+                            <button id="player-back-radio" type="button" class="song-action-btn player-radio-back" aria-label="Back to radio" title="Back to radio without restarting playback"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i><span>Radio</span></button>
+                            <button id="player-cancel-radio" type="button" class="song-action-btn" aria-label="Cancel radio" title="Cancel radio continuation; keep the current song and queue"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+                        </span>
+                    </div>
+                </div>
+                <div class="extra-controls" id="player-extras">
+                    
+                    
+                    <button id="fullscreen-toggle-btn" class="icon-btn" title="Fullscreen Visualizer"><i class="fa-solid fa-expand"></i></button>
+                    
+                    
+                    <button id="queue-toggle-btn" class="control-btn" aria-label="Toggle Queue"><i class="fa-solid fa-list-ol"></i></button>
+                    <div id="player-volume" class="player-volume" role="group" aria-label="Volume">
+                        <button id="mute-btn" class="control-btn volume-icon" aria-label="Mute"><i class="fa-solid fa-volume-high"></i></button>
+                        <input type="range" id="volume-slider" min="0" max="100" value="100" aria-label="Volume" />
+                    </div>
+                </div>
+            </footer>
+</div>
+<section id="demo-stage" role="dialog" aria-modal="true" aria-label="Now playing" hidden>
+  <header><button id="demo-stage-close" class="icon-btn" aria-label="Close now playing">⌄</button><div><small>PLAYING FROM BORAPLAYER</small><strong id="demo-stage-source">Demo collection</strong></div><button id="demo-mode" class="secondary-btn" aria-pressed="false">Video</button></header>
+  <div class="demo-stage-grid"><div id="demo-stage-art" class="demo-stage-art"><img id="demo-stage-cover" alt=""><video id="demo-media" playsinline preload="metadata"></video><div id="demo-visual" class="demo-visual" hidden><div class="demo-wave"></div><p>Sample visual · original demo audio</p></div></div>
+  <div class="demo-stage-details"><h2 id="demo-stage-title">Midnight Current</h2><p id="demo-stage-artist">Bora Sessions</p><div id="demo-stage-controls"></div><div class="ad-slot discovery-ad-slot" data-ad-slot="player-companion-1"></div><div class="demo-panel-tabs"><button id="demo-queue-tab" class="demo-text-button">Up Next</button><button id="demo-lyrics-tab" class="demo-text-button">Lyrics</button></div><div id="demo-stage-panel"></div></div></div>
+</section>
+<dialog id="demo-about" aria-labelledby="demo-about-title"><form method="dialog"><button class="icon-btn demo-dialog-close" aria-label="Close explanation">×</button></form><p class="demo-eyebrow">BORAPLAYER / INTERACTIVE PREVIEW</p><h2 id="demo-about-title">Your music. Your space.</h2><p>Explore BoraPlayer’s interface with a fictional collection and original, generated instrumental samples. Add your own audio or video to try real local playback.</p><ol><li><strong>Discover:</strong> search the sample collection and play a song.</li><li><strong>Library:</strong> save favorites and build a playlist.</li><li><strong>Now playing:</strong> tap the player, switch audio/video views and explore the queue. Audio keeps playing.</li><li><strong>Add local files:</strong> selected files stay in this tab. They are never uploaded and disappear when you reload.</li></ol><p>In the installed app, supported features include YouTube Music discovery and playback, saving music, downloads, playlists, lyrics and optional account sync. These online features are described here but are not connected in this demo.</p><p><strong>Advertising:</strong> all “Ad · Demo” areas are placement samples. No ad network, tracking, paid impressions or advertiser links are active. Final formats depend on provider approval.</p><p class="demo-fineprint">No login, account access, live YouTube requests, conversions, server calls or analytics. GitHub Pages serves the static demo assets.</p><button id="demo-start" class="primary-btn">Explore the demo</button></dialog>
+<div id="demo-status" role="status" aria-live="polite"></div>
+</body></html>

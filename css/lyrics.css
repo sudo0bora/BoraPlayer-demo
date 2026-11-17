@@ -1,0 +1,300 @@
+/* ==========================================================================
+   Lyrics Panel
+   Built entirely on the existing design tokens (global.css / themes.css), so
+   dark and light themes work without any theme-specific rules here.
+   Mirrors the queue panel's placement so it feels native to BoraPlayer.
+   ========================================================================== */
+
+.lyrics-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 380px;
+  max-width: 100vw;
+  height: calc(100vh - 90px);
+  background: var(--bg-surface, #202026);
+  border-left: 1px solid var(--bg-surface-active, #34343e);
+  box-shadow: -5px 0 25px rgba(0, 0, 0, 0.5);
+  z-index: 1500;
+  display: flex;
+  flex-direction: column;
+  outline: none;
+  transition: transform 0.3s ease, visibility 0s linear 0s;
+}
+
+/* Slide out but stay laid out (like the queue panel). `visibility: hidden`
+   additionally removes the off-screen controls from the tab order and from
+   assistive tech. Specificity (0,3,0) beats global.css's `.hidden.hidden`. */
+.lyrics-panel.hidden.hidden {
+  display: flex;
+  transform: translateX(100%);
+  visibility: hidden;
+  transition: transform 0.3s ease, visibility 0s linear 0.3s;
+}
+
+/* ---- Header ---- */
+.lyrics-panel-header {
+  padding: 16px 16px 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  border-bottom: 1px solid var(--bg-surface-active, #34343e);
+  flex-shrink: 0;
+}
+
+.lyrics-heading {
+  min-width: 0;
+}
+
+.lyrics-heading h3 {
+  margin: 0 0 6px 0;
+  color: var(--text-main, #f0f0f3);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-size: var(--font-size-md);
+}
+
+.lyrics-track-line {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.lyrics-track-title,
+.lyrics-track-artist {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lyrics-track-title {
+  color: var(--text-main, #f0f0f3);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.lyrics-track-artist {
+  color: var(--text-muted, #8e8e99);
+  font-size: var(--font-size-xs);
+}
+
+.lyrics-header-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.lyrics-header-actions .icon-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.lyrics-header-actions .icon-btn:focus-visible,
+.lyrics-panel .secondary-btn:focus-visible,
+.lyrics-panel .primary-btn:focus-visible,
+.lyrics-panel .danger-btn:focus-visible {
+  outline: 2px solid var(--primary, #1db954);
+  outline-offset: 2px;
+}
+
+/* ---- Reading view ---- */
+.lyrics-view {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.lyrics-source {
+  padding: 8px 20px 0;
+  font-size: var(--font-size-xs);
+  color: var(--text-subtle, #5c5c66);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.lyrics-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 8px 12px;
+  /* global.css disables text selection app-wide; lyrics should be copyable */
+  user-select: text;
+  -webkit-user-select: text;
+  outline: none;
+}
+
+.lyrics-body:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--primary, #1db954);
+}
+
+/* ---- Plain lyrics ---- */
+.lyrics-plain {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  padding: 8px 8px 24px;
+  font-size: var(--font-size-md);
+  line-height: 1.7;
+  color: var(--text-main, #f0f0f3);
+}
+
+/* ---- Synced lyrics ---- */
+.lyrics-lines {
+  /* Generous top/bottom space so the first and last lines can be centered. */
+  padding: 38vh 0;
+}
+
+.lyrics-item.is-gap {
+  min-height: 1.4em;
+}
+
+.lyrics-line {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 7px 12px;
+  border-left: 3px solid transparent;
+  border-radius: var(--border-radius-sm);
+  font-size: 1.05rem;
+  line-height: 1.45;
+  font-weight: 500;
+  color: var(--text-muted, #8e8e99);
+  overflow-wrap: anywhere;
+  user-select: text;
+  -webkit-user-select: text;
+  transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.lyrics-line:hover {
+  color: var(--text-main, #f0f0f3);
+  background-color: var(--bg-surface-hover, #2a2a32);
+}
+
+.lyrics-line:focus-visible {
+  outline: 2px solid var(--primary, #1db954);
+  outline-offset: -2px;
+}
+
+/* The active line is marked by weight, a leading bar and a tinted background
+   in addition to color, so it doesn't rely on color alone. */
+.lyrics-item.is-active .lyrics-line {
+  color: var(--text-main, #f0f0f3);
+  font-weight: 700;
+  border-left-color: var(--primary, #1db954);
+  background-color: var(--primary-alpha, rgba(29, 185, 84, 0.15));
+}
+
+/* ---- Empty state ---- */
+.lyrics-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 24px;
+  text-align: center;
+  color: var(--text-muted, #8e8e99);
+}
+
+.lyrics-empty i {
+  font-size: 2rem;
+  color: var(--text-subtle, #5c5c66);
+}
+
+.lyrics-empty p {
+  margin: 0;
+  font-size: var(--font-size-sm);
+}
+
+/* ---- Editor ---- */
+.lyrics-editor {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px 16px;
+}
+
+.lyrics-editor-title {
+  color: var(--text-muted, #8e8e99);
+  font-size: var(--font-size-xs);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lyrics-textarea {
+  flex: 1;
+  min-height: 120px;
+  resize: none;
+  background: var(--bg-app, #121214);
+  border: 1px solid var(--bg-surface-active, #34343e);
+  color: var(--text-main, #f0f0f3);
+  border-radius: var(--border-radius-md);
+  padding: 12px;
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+  outline: none;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.lyrics-textarea:focus {
+  border-color: var(--primary, #1db954);
+}
+
+.lyrics-editor-hint {
+  margin: 0;
+  min-height: 1.2em;
+  color: var(--text-muted, #8e8e99);
+  font-size: var(--font-size-xs);
+}
+
+.lyrics-editor-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.lyrics-editor-actions .secondary-btn,
+.lyrics-editor-actions .primary-btn,
+.lyrics-editor-actions .danger-btn {
+  padding: 7px 14px;
+  font-size: var(--font-size-xs);
+}
+
+/* Push "Load file" to the left, actions to the right. */
+#lyrics-load-file-btn {
+  margin-right: auto;
+}
+
+/* ---- Small screens: full-screen overlay, like the queue panel ---- */
+@media (max-width: 720px) {
+  .lyrics-panel {
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    top: 0;
+    right: 0;
+  }
+
+  .lyrics-lines {
+    padding: 30vh 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lyrics-panel,
+  .lyrics-panel.hidden.hidden,
+  .lyrics-line {
+    transition: none;
+  }
+}

@@ -1,0 +1,105 @@
+/* ==========================================================================
+   Remote Control — Settings panel styling
+   Scoped entirely under #remote-control-section so it can't affect any
+   other part of the existing Settings UI.
+   ========================================================================== */
+
+#remote-control-section .remote-state-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+#remote-control-section #remote-state-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+#remote-connection-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
+  padding: var(--space-md);
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+}
+
+.remote-qr-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+#remote-qr-canvas {
+  background: #fff;
+  padding: 8px;
+  border-radius: var(--border-radius-sm);
+  flex-shrink: 0;
+}
+
+.remote-url-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.remote-url-block label {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+#remote-url {
+  font-size: var(--font-size-sm);
+  color: var(--text-main);
+  word-break: break-all;
+  font-variant-numeric: tabular-nums;
+}
+
+#remote-pairing-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background-color: var(--bg-surface-hover);
+  border-radius: var(--border-radius-sm);
+}
+
+#remote-pairing-code {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 2px;
+  font-variant-numeric: tabular-nums;
+  color: var(--primary);
+}
+
+.remote-devices-block h5 {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: var(--font-weight-medium);
+  margin-bottom: var(--space-xs);
+}
+
+.remote-device-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding: var(--space-xs) 0;
+  font-size: var(--font-size-sm);
+  color: var(--text-main);
+}
+
+.remote-device-row:not(:last-child) {
+  border-bottom: 1px solid var(--border-color);
+}

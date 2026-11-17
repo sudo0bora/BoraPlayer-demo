@@ -1,0 +1,143 @@
+/* ==========================================================================
+   Advertising Slots (development placeholders)
+   - Purely a presentation-layer component. Layout-reserving only: it does
+     not read Library/Playlist state and is not part of any list, grid, or
+     scroll container used by track rendering.
+   - Sized to avoid layout shift when a real ad is eventually connected,
+     while collapsing to nothing when ads are disabled (see ad-slot-inactive,
+     toggled by AdSlot.shouldShowAds() in js/ads.js).
+   ========================================================================== */
+
+.ad-slot {
+  flex-shrink: 0;
+  width: 100%;
+  min-height: 100px;
+}
+
+.ad-slot.ad-slot-inactive {
+  display: none;
+}
+
+/* Silent placement samples. A provider is not connected. */
+.ad-slot-placeholder { border-style: solid; background: linear-gradient(120deg, var(--bg-surface), var(--bg-sidebar)); }
+.ad-slot-badge { color: var(--primary); font-size: 9px; letter-spacing: 1px; }
+.ad-slot-label { color: var(--text-muted); }
+.ad-slot-id { font-family: inherit; font-size: 10px; }
+.discovery-ad-slot { min-height: 64px; margin: 0 0 24px; }
+.discovery-ad-slot .ad-slot-placeholder { min-height: 64px; flex-direction: row; gap: 16px; }
+.ad-thumbnail { width: 100%; height: 100%; min-height: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 10px; padding: 10px; border: 1px solid var(--border-color); border-radius: inherit; background: radial-gradient(ellipse at top right, var(--primary-alpha), transparent 80%), var(--bg-surface); text-align: center; }
+.has-ad-thumbnail > .ad-thumbnail { position: absolute; inset: 0; z-index: 4; }
+.track-sponsored-art { position: relative; width: 46px; height: 46px; flex: 0 0 46px; border-radius: 7px; }
+.track-sponsored-art .ad-thumbnail { padding: 2px; gap: 0; }
+.track-sponsored-art .ad-slot-label { display: none; }
+.track-sponsored-art .ad-slot-badge { font-size: 8px; letter-spacing: 0; }
+@media (max-width: 720px) {
+  #sidebar-ad-slot, #content-footer-ad-slot { display: none !important; }
+  .discovery-ad-slot .ad-slot-placeholder { gap: 8px; }
+  .discovery-ad-slot .ad-slot-id { display: none; }
+}
+
+.ad-slot-placeholder {
+  height: 100%;
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: var(--space-sm);
+  text-align: center;
+  border: 1px dashed var(--border-color);
+  border-radius: var(--border-radius-md);
+  background: repeating-linear-gradient(
+    45deg,
+    var(--bg-surface),
+    var(--bg-surface) 10px,
+    var(--bg-surface-hover) 10px,
+    var(--bg-surface-hover) 20px
+  );
+}
+
+.ad-slot-badge {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.ad-slot-label {
+  font-size: var(--font-size-xs);
+  color: var(--text-subtle);
+}
+
+.ad-slot-id {
+  font-size: 10px;
+  font-family: monospace;
+  color: var(--text-subtle);
+  opacity: 0.7;
+}
+
+/* Sidebar placement: sits in the naturally unused gap between the nav
+   list and the footer buttons (that gap already exists today because
+   .sidebar-footer uses margin-top: auto). Reserving a fixed min-height
+   here keeps that gap stable instead of ads popping the footer around
+   later. */
+#sidebar .ad-slot {
+  min-height: 90px;
+}
+
+/* Content-area placement: a thin banner pinned below the scrollable
+   track/playlist/artist grid, inside .playlist-container but outside
+   #playlist-content. .playlist-container is flex-direction: column, so
+   this sits as a fixed-height sibling and #playlist-content (flex: 1)
+   simply gives up that much height — no track/grid rendering logic is
+   aware this element exists. Shared by Library, Playlists, and Artists
+   since they all render into the same container. */
+.content-ad-slot {
+  flex-shrink: 0;
+  min-height: 72px;
+  margin-top: var(--space-sm);
+}
+
+.content-ad-slot .ad-slot-placeholder {
+  min-height: 72px;
+  flex-direction: row;
+  gap: var(--space-sm);
+}
+
+/* Grid-card placement: an extra tile appended after the real cards in
+   .playlists-grid (used by both the Playlists and Artists views). It
+   reuses the real .playlist-card / .artist-card-item box so it lines up
+   with its siblings' size and grid cell, then overrides just the
+   border/background to read clearly as a placeholder, and disables
+   pointer events entirely so it can never be picked up by whatever
+   click-delegation logic drives real playlist/artist navigation,
+   pinning, or renaming. It carries no playlistId/artist name and is
+   never part of the `customPlaylists` or artist-map data. */
+.grid-ad-card {
+  pointer-events: none;
+  cursor: default;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 120px;
+  text-align: center;
+  border-style: dashed;
+  border-color: var(--border-color);
+  background: repeating-linear-gradient(
+    45deg,
+    var(--bg-surface),
+    var(--bg-surface) 10px,
+    var(--bg-surface-hover) 10px,
+    var(--bg-surface-hover) 20px
+  );
+}
+
+/* Match the app surfaces rather than a striped development wireframe. */
+.ad-slot-placeholder { border-style: solid; background: linear-gradient(120deg, var(--bg-surface), var(--bg-sidebar)); }
+.ad-slot-badge { color: var(--primary); font-size: 9px; letter-spacing: 1px; }
+.ad-slot-label { color: var(--text-muted); }
+.ad-slot-id { font-family: inherit; font-size: 10px; }

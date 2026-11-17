@@ -1,0 +1,446 @@
+/* ==========================================================================
+   YouTube Search (Library / YouTube mode switch + results)
+   Uses only the existing design tokens from global.css / themes.css.
+   Desktop only: the mode switch and panel carry .converter-only, which
+   features.css hides at <= 1024px.
+   ========================================================================== */
+
+/* ---- Mode switch (segmented control) ---- */
+.search-mode-switch {
+    display: inline-flex;
+    flex-shrink: 0;
+    padding: 3px;
+    gap: 2px;
+    background: var(--bg-surface, #202026);
+    border: 1px solid var(--bg-surface-active, #34343e);
+    border-radius: var(--border-radius-full, 9999px);
+}
+
+.search-mode-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: var(--border-radius-full, 9999px);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: var(--font-weight-bold, 600);
+    color: var(--text-muted, #8e8e99);
+    transition: background-color var(--transition-fast, 0.15s ease), color var(--transition-fast, 0.15s ease);
+}
+
+.search-mode-btn:hover {
+    color: var(--text-main, #f0f0f3);
+}
+
+.search-mode-btn.is-active {
+    background: var(--primary, #1db954);
+    color: #000;
+}
+
+.search-mode-btn:focus-visible {
+    outline: 2px solid var(--primary, #1db954);
+    outline-offset: 2px;
+}
+
+/* ---- Toolbar mode toggling (CSS only, so the Library search input and its
+        state are never touched). Specificity beats `.library-toolbar .search-bar-wrap`. ---- */
+.library-toolbar:not(.yt-mode) .yt-search-bar {
+    display: none;
+}
+
+.library-toolbar.yt-mode .search-bar-wrap:not(.yt-search-bar),
+.library-toolbar.yt-mode .library-filters {
+    display: none;
+}
+
+.yt-search-bar .search-input {
+    padding-right: 96px;
+}
+
+.yt-search-bar .search-clear-btn {
+    right: 96px;
+}
+
+.yt-search-submit {
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 5px 12px;
+}
+
+.yt-search-submit:active {
+    transform: translateY(-50%) scale(0.98);
+}
+
+/* ---- Swap the track list for the results panel ---- */
+#main-content-area.yt-search-active #track-headers,
+#main-content-area.yt-search-active #playlist-content,
+#main-content-area.yt-search-active #content-footer-ad-slot {
+    display: none !important;
+}
+
+/* Layout: in YouTube mode the panel fills the space left in the main view and
+   only the results list scrolls, so the pager stays pinned above the player
+   bar at any window size (it used to overflow beneath the player controls). */
+#main-view {
+    min-height: 0;
+}
+
+#main-content-area.yt-search-active {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.yt-search-panel {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: var(--space-xs, 8px) 0 0;
+}
+
+.yt-search-results {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+}
+
+/* Rows scroll here; the pager below is a fixed footer (not sticky). */
+.yt-result-scroll {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.yt-result {
+    flex-shrink: 0;
+}
+
+.yt-search-results > .yt-search-message {
+    overflow-y: auto;
+}
+
+/* ---- Download queue ---- */
+.yt-queue {
+    flex: 0 0 auto;
+    margin-bottom: var(--space-xs, 8px);
+    padding: var(--space-xs, 8px) var(--space-sm, 12px);
+    background: var(--bg-surface, #202026);
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+    border-radius: var(--border-radius-md, 8px);
+}
+
+.yt-queue-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-xs, 8px);
+    flex-wrap: wrap;
+}
+
+.yt-queue-title {
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: var(--font-weight-bold, 600);
+    color: var(--text-main, #f0f0f3);
+}
+
+.yt-queue-count {
+    padding: 1px 8px;
+    border-radius: var(--border-radius-full, 9999px);
+    background: var(--primary-alpha, rgba(29, 185, 84, 0.15));
+    color: var(--primary, #1db954);
+    font-variant-numeric: tabular-nums;
+}
+
+.yt-queue-count.is-full {
+    background: rgba(224, 160, 48, 0.18);
+    color: #e0a030;
+}
+
+.yt-queue-sub {
+    font-weight: var(--font-weight-regular, 400);
+    font-size: var(--font-size-xs, 0.75rem);
+    color: var(--text-muted, #8e8e99);
+}
+
+.yt-queue-tools {
+    display: flex;
+    gap: 6px;
+}
+
+.yt-queue-btn {
+    padding: 4px 10px;
+    font-size: var(--font-size-xs, 0.75rem);
+}
+
+.yt-queue-list {
+    margin-top: var(--space-xs, 8px);
+    max-height: clamp(56px, 20vh, 168px);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.yt-queue-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs, 8px);
+    padding: 4px 6px;
+    border-radius: var(--border-radius-sm, 4px);
+}
+
+.yt-queue-item.is-active {
+    background: var(--primary-alpha, rgba(29, 185, 84, 0.15));
+}
+
+.yt-queue-item-icon {
+    width: 18px;
+    text-align: center;
+    color: var(--primary, #1db954);
+}
+
+.yt-queue-item.is-failed .yt-queue-item-icon {
+    color: #e74c3c;
+}
+
+.yt-queue-item-num {
+    width: 18px;
+    text-align: center;
+    font-size: var(--font-size-xs, 0.75rem);
+    color: var(--text-subtle, #5c5c66);
+    font-variant-numeric: tabular-nums;
+}
+
+.yt-queue-item-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.yt-queue-item-title {
+    font-size: var(--font-size-xs, 0.75rem);
+    color: var(--text-main, #f0f0f3);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.yt-queue-item-status {
+    font-size: 0.6875rem;
+    color: var(--text-muted, #8e8e99);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.yt-queue-item-status.is-error {
+    color: #e74c3c;
+}
+
+.yt-queue-icon-btn {
+    flex-shrink: 0;
+}
+
+/* ---- Messages (idle / loading / empty / error) ---- */
+.yt-search-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm, 12px);
+    padding: 48px var(--space-md, 16px);
+    text-align: center;
+    color: var(--text-muted, #8e8e99);
+    font-size: var(--font-size-sm, 0.875rem);
+}
+
+.yt-search-message.is-error {
+    color: #e74c3c;
+}
+
+.yt-search-message-icon {
+    font-size: 2.5rem;
+    color: var(--text-subtle, #5c5c66);
+}
+
+/* ---- Result rows ---- */
+.yt-result-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.yt-result {
+    display: grid;
+    grid-template-columns: 128px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--space-sm, 12px);
+    padding: var(--space-xs, 8px) var(--space-sm, 12px);
+    border-radius: var(--border-radius-md, 8px);
+    transition: background-color var(--transition-fast, 0.15s ease);
+}
+
+.yt-result:hover {
+    background: var(--bg-surface-hover, #2a2a32);
+}
+
+.yt-result-thumb {
+    position: relative;
+    width: 128px;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: var(--border-radius-sm, 4px);
+    background: var(--bg-surface, #202026);
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.yt-result-thumb img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.yt-result-thumb-fallback {
+    color: var(--text-subtle, #5c5c66);
+}
+
+.yt-result-duration {
+    position: absolute;
+    right: 4px;
+    bottom: 4px;
+    padding: 1px 5px;
+    border-radius: var(--border-radius-sm, 4px);
+    background: rgba(0, 0, 0, 0.82);
+    color: #fff;
+    font-size: var(--font-size-xs, 0.75rem);
+    font-variant-numeric: tabular-nums;
+}
+
+.yt-result-info {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.yt-result-title {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: var(--font-weight-medium, 500);
+    color: var(--text-main, #f0f0f3);
+}
+
+.yt-result-channel {
+    font-size: var(--font-size-xs, 0.75rem);
+    color: var(--text-muted, #8e8e99);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.yt-result-status {
+    font-size: var(--font-size-xs, 0.75rem);
+    color: var(--text-muted, #8e8e99);
+    min-height: 0;
+}
+
+.yt-result-status:empty {
+    display: none;
+}
+
+.yt-result-status.is-error {
+    color: #e74c3c;
+}
+
+.yt-result-status.is-warning {
+    color: #e0a030;
+}
+
+.yt-result-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs, 8px);
+}
+
+.yt-import-btn {
+    min-width: 112px;
+    justify-content: center;
+}
+
+.yt-in-library {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: var(--font-weight-bold, 600);
+    color: var(--primary, #1db954);
+}
+
+.yt-in-library.hidden,
+.yt-result-actions .hidden {
+    display: none;
+}
+
+@media (max-width: 1280px) {
+    .yt-result {
+        grid-template-columns: 96px minmax(0, 1fr) auto;
+        gap: var(--space-xs, 8px);
+    }
+
+    .yt-result-thumb {
+        width: 96px;
+    }
+
+    .yt-import-btn {
+        min-width: 0;
+    }
+}
+
+/* ---- Pagination (6 results per page) ---- */
+.yt-pager {
+    flex: 0 0 auto;
+    border-top: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-xs, 8px);
+    padding: var(--space-xs, 8px) 0;
+}
+
+.yt-page-numbers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.yt-page-btn {
+    padding: 6px 12px;
+    min-width: 36px;
+    justify-content: center;
+}
+
+.yt-page-btn.is-current {
+    background: var(--primary, #1db954);
+    color: #000;
+}
+
+.yt-page-info {
+    flex-basis: 100%;
+    text-align: center;
+    font-size: var(--font-size-xs, 0.75rem);
+    color: var(--text-muted, #8e8e99);
+}

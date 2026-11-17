@@ -1,0 +1,1472 @@
+/* ==========================================================================
+   Features: Modals, Context Menus, Queue Panel & Toasts
+   ========================================================================== */
+
+.header-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.secondary-btn,
+.primary-btn,
+.danger-btn,
+.warning-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: var(--border-radius-full);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.05s ease, filter 0.2s ease;
+}
+
+.secondary-btn {
+    background: transparent;
+    border: 1px solid var(--primary, #1db954);
+    color: var(--primary, #1db954);
+}
+
+.secondary-btn:hover {
+    background: rgba(29, 185, 84, 0.15);
+}
+
+.secondary-btn:active {
+    background: rgba(29, 185, 84, 0.25);
+    transform: scale(0.98);
+}
+
+.primary-btn {
+    background: var(--primary, #1db954);
+    border: none;
+    color: #000;
+}
+
+.primary-btn:hover {
+    background-color: var(--primary-hover, #1ed760);
+}
+
+.primary-btn:active {
+    background-color: var(--primary-active, #169c46);
+    transform: scale(0.98);
+}
+
+.danger-btn {
+    background: #e74c3c;
+    border: none;
+    color: #fff;
+}
+
+.danger-btn:hover {
+    background: #c0392b;
+}
+
+.danger-btn:active {
+    background: #a5311f;
+    transform: scale(0.98);
+}
+
+.secondary-btn i,
+.primary-btn i,
+.danger-btn i {
+    line-height: 1;
+}
+
+/* Used for actions that are noticeably more consequential than a plain
+   secondary action, but not a full destructive/irreversible reset (e.g.
+   Clear Cache) — visually sits between .secondary-btn and .danger-btn. */
+.warning-btn {
+    background: transparent;
+    border: 1px solid #e0a030;
+    color: #e0a030;
+}
+
+.warning-btn:hover {
+    background: rgba(224, 160, 48, 0.15);
+}
+
+.warning-btn:active {
+    background: rgba(224, 160, 48, 0.25);
+    transform: scale(0.98);
+}
+
+.warning-btn i {
+    line-height: 1;
+}
+
+.secondary-btn:disabled,
+.primary-btn:disabled,
+.danger-btn:disabled,
+.warning-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    filter: none;
+    transform: none;
+}
+
+.header-actions .hidden-btn {
+    display: none !important;
+}
+
+/* Track Row Layout & Columns */
+.col-actions {
+    width: 60px;
+    text-align: right;
+}
+
+.col-plays {
+    width: 70px;
+    text-align: right;
+    color: var(--text-muted, #8e8e99);
+}
+
+.more-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted, #8e8e99);
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: var(--border-radius-sm);
+    transition: color 0.2s, background-color 0.2s;
+}
+
+.more-btn:hover {
+    color: var(--text-main, #ffffff);
+    background-color: var(--bg-surface-active, #34343e);
+}
+
+.favorite-icon {
+    margin-right: 12px;
+    cursor: pointer;
+    color: var(--text-muted, #8e8e99);
+    transition: color 0.2s;
+}
+
+.favorite-icon.favorited {
+    color: #e74c3c;
+}
+
+/* Floating Context Menu */
+.context-menu {
+    position: absolute;
+    background: var(--bg-surface, #202026);
+    border: 1px solid var(--bg-surface-active, #34343e);
+    border-radius: var(--border-radius-md);
+    padding: 6px 0;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+    z-index: 2500;
+    min-width: 190px;
+}
+
+.context-menu.hidden {
+    display: none;
+}
+
+.menu-item {
+    padding: 10px 16px;
+    cursor: pointer;
+    color: var(--text-main, #f0f0f3);
+    font-size: var(--font-size-sm);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: background-color 0.15s ease;
+}
+
+.menu-item:hover {
+    background-color: var(--bg-surface-active, #34343e);
+}
+
+.menu-item-danger {
+    color: #e74c3c;
+}
+.menu-item-danger:hover {
+    background-color: rgba(231, 76, 60, 0.15);
+}
+
+.menu-divider {
+    height: 1px;
+    background: var(--bg-surface-active, #34343e);
+    margin: 4px 0;
+}
+
+/* Modals Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    backdrop-filter: blur(4px);
+}
+
+.modal-overlay.hidden {
+    display: none;
+}
+
+.modal-content {
+    background: var(--bg-surface, #202026);
+    padding: 24px;
+    border-radius: var(--border-radius-lg);
+    width: min(380px, 92vw);
+    max-height: 88vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+}
+
+.modal-content h3 {
+    margin: 0 0 4px 0;
+    color: var(--text-main, #ffffff);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.modal-content input {
+    background: var(--bg-app, #121214);
+    border: 1px solid var(--bg-surface-active, #34343e);
+    color: var(--text-main, #ffffff);
+    padding: 10px 12px;
+    border-radius: var(--border-radius-md);
+    font-size: var(--font-size-sm);
+    outline: none;
+}
+
+.modal-content input:focus {
+    border-color: var(--primary, #1db954);
+}
+
+.modal-message {
+    color: var(--text-muted, #8e8e99);
+    font-size: var(--font-size-sm);
+    line-height: 1.4;
+    margin: 0;
+}
+
+.modal-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+/* Converter modal specifically can show up to 4 buttons at once (Close,
+   Stop Download, Track, Playlist). Squeezing all four onto one line wraps
+   their labels onto two lines and reads as one solid clump. Let them wrap
+   into a clean 2-up grid instead, each with enough width to keep its label
+   on one line. */
+#converter-action-buttons {
+    justify-content: stretch;
+}
+
+#converter-action-buttons button {
+    flex: 1 1 calc(50% - 5px);
+    white-space: nowrap;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+/* Add to Playlist Options List */
+.playlist-options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    margin: 10px 0;
+}
+
+.playlist-option-btn {
+    background: var(--bg-app, #121214);
+    border: 1px solid var(--bg-surface-active, #34343e);
+    color: var(--text-main, #ffffff);
+    padding: 12px;
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    text-align: left;
+    font-size: var(--font-size-sm);
+    transition: border-color 0.2s, background-color 0.2s;
+}
+
+.playlist-option-btn:hover {
+    border-color: var(--primary, #1db954);
+    background: var(--bg-surface-active, #34343e);
+}
+
+/* Keyboard Shortcuts Modal */
+.shortcuts-content {
+    width: min(400px, 92vw);
+}
+
+.shortcuts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-height: 340px;
+    overflow-y: auto;
+}
+
+.shortcuts-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 4px;
+    border-bottom: 1px solid var(--bg-surface-active, #34343e);
+}
+
+.shortcuts-row:last-child {
+    border-bottom: none;
+}
+
+.shortcuts-row span {
+    color: var(--text-main, #ffffff);
+    font-size: var(--font-size-sm);
+}
+
+.shortcuts-row kbd {
+    background: var(--bg-app, #121214);
+    border: 1px solid var(--bg-surface-active, #34343e);
+    border-bottom-width: 2px;
+    color: var(--text-main, #ffffff);
+    font-family: inherit;
+    font-size: var(--font-size-xs);
+    padding: 3px 8px;
+    border-radius: var(--border-radius-sm);
+    margin-left: 6px;
+}
+
+.shortcuts-hint {
+    font-size: var(--font-size-xs);
+    text-align: center;
+}
+
+/* Settings Modal Specifics */
+.settings-content {
+    width: min(440px, 92vw);
+}
+
+.settings-section {
+    margin-top: 10px;
+}
+
+.settings-section h4 {
+    margin: 0 0 8px 0;
+    color: var(--text-main, #fff);
+    font-size: var(--font-size-sm);
+}
+
+.settings-desc {
+    color: var(--text-muted, #8e8e99);
+    font-size: var(--font-size-sm);
+    margin: 0 0 12px 0;
+}
+
+.settings-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 10px;
+}
+
+.stat-pill {
+    background: var(--bg-app, #121214);
+    border: 1px solid var(--bg-surface-active, #34343e);
+    padding: 12px;
+    border-radius: var(--border-radius-md);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat-num {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--primary, #1db954);
+}
+
+.stat-label {
+    font-size: var(--font-size-xs);
+    color: var(--text-muted, #8e8e99);
+}
+
+.settings-export-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.ios-prototype-controls {
+  margin: 12px 0;
+}
+
+#ios-prototype-section > label {
+  display: block;
+  margin: 12px 0 6px;
+}
+
+#ios-prototype-section > input:not([type="range"]),
+#ios-prototype-section > select {
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+#ios-prototype-section input[type="range"] {
+  width: 100%;
+  touch-action: pan-y;
+}
+
+#ios-prototype-queue {
+  display: grid;
+  gap: 8px;
+  max-height: 240px;
+  overflow-y: auto;
+  margin: 12px 0;
+  padding: 0;
+  list-style: none;
+}
+
+#ios-prototype-queue li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+#ios-prototype-queue button[data-op="select"] {
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#ios-prototype-queue [aria-current="true"] {
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+#ios-prototype-diagnostics {
+  max-height: 200px;
+  overflow: auto;
+  font-size: 12px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.data-management-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* Sleep Timer (Settings)
+   A small accessible ON/OFF switch. Nothing else in Settings needed a real
+   toggle before this (Remote Control uses a plain Enable/Disable button),
+   so this is a new, minimal component built from existing tokens only. */
+.toggle-switch {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    width: 42px;
+    height: 24px;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.toggle-switch input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.toggle-slider {
+    position: absolute;
+    inset: 0;
+    background-color: var(--bg-surface-active, #34343e);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-full);
+    transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.toggle-slider::before {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background-color: var(--text-main, #f0f0f3);
+    transition: transform var(--transition-fast);
+}
+
+/* ON state communicated by both color AND knob position/label text — never
+   color alone (accessibility requirement). */
+.toggle-switch input:checked + .toggle-slider {
+    background-color: var(--primary, #1db954);
+    border-color: var(--primary, #1db954);
+}
+
+.toggle-switch input:checked + .toggle-slider::before {
+    transform: translateX(18px);
+    background-color: #000;
+}
+
+.toggle-switch input:focus-visible + .toggle-slider {
+    outline: 2px solid var(--primary, #1db954);
+    outline-offset: 2px;
+}
+
+/* Overrides .settings-desc's muted color — appears later in the cascade at
+   the same (single-class) specificity, so no !important needed. */
+.sleep-timer-status {
+    color: var(--primary, #1db954);
+    font-weight: var(--font-weight-medium);
+    margin-top: 8px;
+}
+
+/* Destructive-action ("type DELETE") confirmation modal */
+.danger-confirm-hint {
+    margin-top: -6px;
+}
+
+#danger-confirm-word {
+    color: var(--text-main, #ffffff);
+    letter-spacing: 0.5px;
+}
+
+/* Queue Side Panel */
+.queue-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 320px;
+    height: calc(100vh - 90px); 
+    background: var(--bg-surface, #202026);
+    border-left: 1px solid var(--bg-surface-active, #34343e);
+    box-shadow: -5px 0 25px rgba(0,0,0,0.5);
+    z-index: 1500;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease;
+}
+
+.queue-panel.hidden {
+    transform: translateX(100%);
+}
+
+.queue-panel.hidden.hidden {
+    transform: translateX(100%);
+    display: flex; /* Overrides global .hidden.hidden display: none to allow animation to execute visually */
+}
+
+.queue-panel-header {
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--bg-surface-active, #34343e);
+}
+
+.queue-panel-header h3 {
+    margin: 0;
+    color: var(--text-main, #f0f0f3);
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted, #8e8e99);
+    cursor: pointer;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--border-radius-md);
+    transition: color 0.15s ease, background-color 0.15s ease;
+}
+.icon-btn:hover {
+    color: var(--text-main, #f0f0f3);
+    background-color: var(--bg-surface-active, #34343e);
+}
+
+.queue-panel-body {
+    padding: 16px;
+    overflow-y: auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.queue-section-label {
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted, #8e8e99);
+    font-weight: 600;
+}
+
+.queue-now-playing {
+    background: var(--bg-app, #121214);
+    padding: 10px;
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--primary, #1db954);
+}
+
+.queue-repeat-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--primary, #1db954);
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 6px;
+}
+
+.queue-empty-hint {
+    color: var(--text-muted, #8e8e99);
+    font-size: var(--font-size-sm);
+    margin: 0;
+}
+
+.queue-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.queue-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.queue-more-btn {
+    width: 26px;
+    height: 26px;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+
+/* Toast Notifications Container */
+.toast-container {
+    position: fixed;
+    bottom: 110px;
+    right: 24px;
+    z-index: 3000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.toast {
+    background: var(--bg-surface, #202026);
+    color: var(--text-main, #f0f0f3);
+    padding: 12px 20px;
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--primary, #1db954);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    font-size: var(--font-size-sm);
+    transition: opacity 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.toast-text {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.toast-close {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text-muted, #8e8e99);
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.toast-close:hover {
+    color: var(--text-main, #f0f0f3);
+    background: rgba(255,255,255,0.1);
+}
+
+.toast-action {
+    flex-shrink: 0;
+    min-height: 36px;
+    padding: 0 10px;
+    border-radius: var(--border-radius-sm, 6px);
+    color: var(--text-main);
+    background: var(--bg-sidebar);
+    font-size: inherit;
+    font-weight: 600;
+}
+
+/* Helpers.showToast() already applies a type class ('info' | 'success' |
+   'error') to every toast, but nothing previously read it — every toast
+   rendered with the same green border regardless of outcome, including
+   failed imports and other error paths. Distinguishing them here needed no
+   JS changes at all. */
+.toast.success {
+    border-color: var(--primary, #1db954);
+}
+
+.toast.error {
+    border-color: #e74c3c;
+}
+
+.toast.info {
+    border-color: var(--text-muted, #8e8e99);
+}
+
+/* Playlists Grid */
+.playlists-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    padding: 10px 0;
+}
+
+.playlist-card {
+    position: relative;
+    background: var(--bg-surface, #202026);
+    border: 1px solid transparent;
+    border-radius: var(--border-radius-lg);
+    padding: 20px;
+    cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.playlist-card.pinned {
+    border-color: var(--primary, #1db954);
+}
+
+.playlist-pin-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.3);
+    border: none;
+    color: var(--text-muted, #8e8e99);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: color 0.2s, background-color 0.2s;
+}
+
+.playlist-pin-btn:hover {
+    color: var(--text-main, #ffffff);
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.playlist-pin-btn.active {
+    color: var(--primary, #1db954);
+}
+
+.playlist-card:hover {
+    background: var(--bg-surface-hover, #2a2a32);
+    border-color: var(--primary, #1db954);
+    transform: translateY(-2px);
+}
+
+.playlist-card h3 {
+    margin: 0 0 6px 0;
+    color: var(--text-main, #ffffff);
+    font-size: 1.1rem;
+}
+
+.playlist-card p {
+    margin: 0;
+    color: var(--text-muted, #8e8e99);
+    font-size: var(--font-size-sm);
+}
+
+#main-view.drag-active {
+    outline: 2px dashed var(--primary, #1db954);
+    outline-offset: -10px;
+}
+
+/* Pinned Tracks */
+.pinned-icon {
+    margin-right: 8px;
+    cursor: pointer;
+    color: var(--text-subtle, #5c5c66);
+    transition: color 0.2s;
+}
+
+.pinned-icon.active {
+    color: var(--primary, #1db954);
+}
+
+.track-row.pinned {
+    background-color: rgba(29, 185, 84, 0.06);
+}
+
+/* A pinned track that's also currently playing should read as "playing"
+   first — this beats both .track-row.pinned and .track-row.playing on
+   specificity alone, so it doesn't matter which stylesheet loads last. */
+.track-row.playing.pinned {
+    background-color: var(--bg-surface-active);
+}
+
+/* Fullscreen Visualizer/Thumbnail Stage */
+#main-view {
+    position: relative; 
+}
+
+.fullscreen-stage {
+    position: absolute;
+    inset: 0;
+    background: var(--bg-app, #121214);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    z-index: 50;
+    padding: var(--space-lg);
+    overflow: hidden;
+}
+
+.fullscreen-stage.hidden {
+    display: none;
+}
+
+.fullscreen-visual-area {
+    position: relative;
+    width: 100%;
+    flex: 1;
+    min-height: 0; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#fullscreen-visualizer-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.fullscreen-thumb-art {
+    display: none;
+    width: min(50vh, 60%);
+    aspect-ratio: 1;
+    border-radius: 20px;
+    background-color: var(--bg-surface);
+    background-size: cover;
+    background-position: center;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    color: var(--text-subtle);
+    box-shadow: 0 0 24px 0 rgba(29, 185, 84, 0.12);
+    transition: transform 0.09s ease-out, box-shadow 0.09s ease-out;
+}
+
+@keyframes fullscreen-thumb-glow {
+    0%, 100% {
+        box-shadow: 0 0 30px 0 rgba(29, 185, 84, 0.28);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 0 70px 16px rgba(29, 185, 84, 0.5);
+        transform: scale(1.015);
+    }
+}
+
+.fullscreen-thumb-art.is-playing {
+    animation: fullscreen-thumb-glow 2.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .fullscreen-thumb-art.is-playing {
+        animation: none;
+    }
+    .fullscreen-thumb-art {
+        transition: none;
+    }
+}
+
+.fullscreen-stage.fullscreen-thumbnail-mode #fullscreen-visualizer-canvas {
+    display: none;
+}
+
+.fullscreen-stage.fullscreen-thumbnail-mode .fullscreen-thumb-art {
+    display: flex;
+}
+
+.fullscreen-info {
+    text-align: center;
+    margin-top: var(--space-md);
+    flex-shrink: 0; 
+    width: 100%;
+    max-width: 90%;
+}
+
+.fullscreen-title {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-main);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.fullscreen-artist {
+    font-size: var(--font-size-md);
+    color: var(--text-muted);
+    margin-top: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.fullscreen-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+    margin-top: var(--space-md);
+}
+
+.fullscreen-controls .control-btn {
+    width: 48px;
+    height: 48px;
+    font-size: var(--font-size-lg);
+}
+
+.fullscreen-controls .control-btn.play-main {
+    width: 56px;
+    height: 56px;
+    font-size: 2.2rem;
+}
+
+/* Optical centering for fullscreen stage */
+.fullscreen-controls .control-btn.play-main i.fa-play {
+    margin-left: 4px;
+}
+
+.fullscreen-top-actions {
+    position: absolute;
+    top: var(--space-md);
+    right: var(--space-md);
+    display: flex;
+    gap: var(--space-xs);
+}
+
+/* ==========================================================================
+   Fullscreen — Synced Lyrics layer
+   A third visual layer alongside the canvas and thumbnail above, toggled by
+   LyricsStage (js/lyrics-stage.js), entered as the third stop of the
+   in-stage #fullscreen-mode-btn cycle (see Fullscreen.toggleMode()). Hidden by default;
+   .fullscreen-lyrics-mode on .fullscreen-stage reveals it and hides the
+   other two, same on/off pattern .fullscreen-thumbnail-mode already uses
+   for the canvas/thumbnail pair. These two rule blocks target the same
+   elements at equal specificity — this one is deliberately placed AFTER
+   the .fullscreen-thumbnail-mode rules above so it always wins regardless
+   of which mode class happens to also be present underneath.
+   ========================================================================== */
+
+#fullscreen-lyrics-stage {
+    display: none;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.fullscreen-stage.fullscreen-lyrics-mode #fullscreen-visualizer-canvas,
+.fullscreen-stage.fullscreen-lyrics-mode .fullscreen-thumb-art {
+    display: none;
+}
+
+.fullscreen-stage.fullscreen-lyrics-mode #fullscreen-lyrics-stage {
+    display: flex;
+}
+
+.fullscreen-lyrics-empty {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 24px;
+    text-align: center;
+    color: var(--text-muted);
+}
+
+.fullscreen-lyrics-empty i {
+    font-size: 2.6rem;
+    color: var(--text-subtle);
+}
+
+.fullscreen-lyrics-empty p {
+    margin: 0;
+    font-size: var(--font-size-md);
+}
+
+/* Unsynced (plain) lyrics: one big centered, scrollable block. */
+.fullscreen-lyrics-plain {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 30vh 24px;
+    text-align: center;
+    font-size: 1.3rem;
+    line-height: 1.8;
+    color: var(--text-main);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    user-select: text;
+    -webkit-user-select: text;
+}
+
+/* Synced lyrics: centered, auto-following list — same interaction model as
+   the side Lyrics panel's .lyrics-lines, scaled up for the hero view. */
+.fullscreen-lyrics-lines {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+    /* Generous top/bottom space so the first and last lines can be centered. */
+    padding: 34vh 24px;
+    text-align: center;
+}
+
+.fullscreen-lyrics-plain.hidden,
+.fullscreen-lyrics-lines.hidden {
+    display: none;
+}
+
+.fullscreen-lyrics-item.is-gap {
+    min-height: 1.6em;
+}
+
+.fullscreen-lyrics-line {
+    display: block;
+    width: 100%;
+    padding: 10px 20px;
+    border: none;
+    border-radius: var(--border-radius-md);
+    background: none;
+    font-size: 1.6rem;
+    line-height: 1.5;
+    font-weight: 600;
+    color: var(--text-subtle);
+    overflow-wrap: anywhere;
+    cursor: pointer;
+    user-select: text;
+    -webkit-user-select: text;
+    transition: color 0.25s ease, transform 0.25s ease, background-color 0.25s ease;
+}
+
+.fullscreen-lyrics-line:hover {
+    color: var(--text-muted);
+    background-color: var(--bg-surface-hover);
+}
+
+.fullscreen-lyrics-line:focus-visible {
+    outline: 2px solid var(--primary, #1db954);
+    outline-offset: -2px;
+}
+
+/* The active line is marked by weight, scale and color together, not color
+   alone — same principle as the side panel's left-border treatment. */
+.fullscreen-lyrics-item.is-active .fullscreen-lyrics-line {
+    color: var(--text-main);
+    transform: scale(1.05);
+}
+
+@media (max-width: 720px) {
+    .fullscreen-lyrics-line {
+        font-size: 1.15rem;
+        padding: 8px 14px;
+    }
+    .fullscreen-lyrics-plain {
+        font-size: 1.1rem;
+        padding: 24vh 16px;
+    }
+    .fullscreen-lyrics-lines {
+        padding: 26vh 16px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .fullscreen-lyrics-line,
+    .fullscreen-lyrics-item.is-active .fullscreen-lyrics-line {
+        transition: none;
+        transform: none;
+    }
+}
+
+/* ==========================================================================
+   YouTube Converter (desktop/laptop only — see .converter-only rule below)
+   ========================================================================== */
+
+.converter-content {
+    width: min(420px, 92vw);
+}
+
+.converter-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.converter-status {
+    text-align: center;
+}
+
+.converter-status.hidden {
+    display: none;
+}
+
+.converter-status.is-error {
+    color: #e74c3c;
+}
+
+.converter-status.is-info {
+    color: var(--text-muted, #8e8e99);
+}
+
+/* Circular loading spinner (no progress bar) */
+.converter-spinner {
+    display: flex;
+    justify-content: center;
+    padding: 4px 0;
+}
+
+.converter-spinner.hidden {
+    display: none;
+}
+
+.converter-spinner-ring {
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--bg-surface-active, #34343e);
+    border-top-color: var(--primary, #1db954);
+    border-radius: 50%;
+    animation: converter-spin 0.8s linear infinite;
+}
+
+@keyframes converter-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+#converter-import-btn.is-loading,
+#converter-import-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    filter: none;
+}
+
+@media (max-width: 1024px) {
+    .converter-only {
+        display: none !important;
+    }
+}
+
+/* Persistent Import Status Pill
+   Lives in the header next to the Converter button so it's visible from
+   every view (Library/Artists/Playlists) while a background import runs.
+   Visibility is toggled the same way as everything else in this app: a
+   plain `hidden` class, governed by the shared rule in global.css. */
+.import-status-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background: var(--bg-surface-active, #34343e);
+    border-radius: var(--border-radius-full, 9999px);
+    font-size: var(--font-size-xs, 0.75rem);
+    color: var(--text-main, #f0f0f3);
+    cursor: pointer;
+    max-width: 240px;
+}
+
+.import-status-pill i.fa-spinner {
+    color: var(--primary, #1db954);
+    flex-shrink: 0;
+}
+
+.import-status-pill span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.import-status-cancel-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--text-muted, #8e8e99);
+    padding: 3px;
+    border-radius: 50%;
+}
+
+.import-status-cancel-btn:hover {
+    color: var(--text-main, #f0f0f3);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+/* ==========================================================================
+   Library Filter & Sort Toolbar
+   ========================================================================== */
+.library-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.library-toolbar .search-bar-wrap {
+    flex: 1 1 250px;
+    margin-bottom: 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.library-filters {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* Artist Search: the same search bar and toolbar as Library, but the
+   Favorites/Pinned/Type filter and A–Z/Recently-Added sort don't map onto
+   a grid of artists (an artist has many tracks, not one row to filter or
+   sort) — only the search box stays visible in this context. */
+.library-toolbar.artists-mode .library-filters {
+    display: none;
+}
+
+/* Recently Played: same toolbar again, but here search and the
+   Favorites/Pinned/Type filter both still make sense (e.g. "recently
+   played favorites"). Only the sort dropdown is hidden — this view always
+   orders by actual play recency (see Playlist.getDisplayQueue), so a sort
+   control that visibly does nothing would just be confusing. Targets the
+   sort control specifically (2nd .filter-group) rather than the whole
+   .library-filters block, so the Type filter dropdown (1st .filter-group)
+   stays. */
+.library-toolbar.recent-mode .library-filters .filter-group:nth-of-type(2) {
+    display: none;
+}
+
+.filter-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.filter-icon,
+.search-icon {
+    position: absolute;
+    left: 14px;
+    color: var(--text-muted, #8e8e99);
+    font-size: var(--font-size-sm);
+    pointer-events: none;
+}
+
+.filter-icon {
+    z-index: 2;
+}
+
+.library-select {
+    background: var(--bg-surface, #202026);
+    border: 1px solid var(--bg-surface-active, #34343e);
+    color: var(--text-main, #ffffff);
+    padding: 10px 32px 10px 38px;
+    border-radius: var(--border-radius-md);
+    font-size: var(--font-size-sm);
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    transition: border-color 0.2s, background-color 0.2s;
+    font-family: inherit;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238e8e99' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px;
+}
+
+.library-select:hover {
+    background: var(--bg-surface-hover, #2a2a32);
+}
+
+.library-select:focus {
+    border-color: var(--primary, #1db954);
+}
+
+.search-input {
+    width: 100%;
+    background: var(--bg-surface, #202026);
+    border: 1px solid var(--bg-surface-active, #34343e);
+    color: var(--text-main, #ffffff);
+    padding: 10px 40px 10px 38px;
+    border-radius: var(--border-radius-md);
+    font-size: var(--font-size-sm);
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.search-input:focus {
+    border-color: var(--primary, #1db954);
+}
+
+.search-clear-btn {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    color: var(--text-muted, #8e8e99);
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+}
+
+.search-clear-btn.hidden {
+    display: none;
+}
+
+.search-clear-btn:hover {
+    color: var(--text-main, #ffffff);
+}
+
+/* ==========================================================================
+   Artist Page / Artist Links & Directory Grid (NEW)
+   ========================================================================== */
+.artist-link {
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.15s ease, text-decoration 0.15s ease;
+}
+
+.artist-link:hover {
+    color: var(--primary, #1db954);
+    text-decoration: underline;
+}
+
+.artist-header {
+    display: flex;
+    align-items: flex-end;
+    gap: 24px;
+    padding: 10px 0 24px 0;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--bg-surface-active, #34343e);
+    flex-wrap: wrap;
+}
+
+.artist-header.hidden {
+    display: none !important;
+}
+
+.artist-header-info {
+    flex: 1;
+    min-width: 200px;
+}
+
+.artist-header-info h2 {
+    font-size: 2.2rem;
+    margin: 0 0 8px 0;
+    color: var(--text-main, #ffffff);
+    line-height: 1.1;
+}
+
+.artist-header-info p {
+    margin: 0;
+    color: var(--text-muted, #8e8e99);
+    font-size: var(--font-size-md);
+}
+
+.artist-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+/* Master Artists Directory View Styles */
+.artist-card-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.artist-card-art {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    background-color: var(--bg-app, #121214);
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3.5rem;
+    color: var(--text-subtle, #5c5c66);
+    margin-bottom: 16px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    border: 1px solid var(--bg-surface-active, #34343e);
+}
+
+/* iOS build: features that only make sense on a computer (or that iOS cannot
+   use) are hidden, not removed. helpers.js sets data-platform="ios" on <html>.
+   !important because some of these sections are shown by script. */
+.ios-only {
+    display: none;
+}
+
+html[data-platform="ios"] .ios-only {
+    display: block;
+}
+
+html[data-platform="ios"] .ios-hidden {
+    display: none !important;
+}
